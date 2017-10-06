@@ -1,0 +1,180 @@
+﻿@model Modelos.OrdenCompraModel
+
+@{
+    ViewBag.Title = "Orden de Compra";
+}
+
+<h2>Crear</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <h4>Orden de compra</h4>
+    <hr />
+
+    <div class="row">
+        <table class="table table-responsive col-md-12">
+            <tr>
+                <td>
+                    @Html.LabelFor(model => model.cabecera.ProveedorId, htmlAttributes: new { @class = "control-label col-md-2" })
+                </td>
+                <td>
+                    <div class="DB-select-proveedor">
+                        @Html.DropDownListFor(model => model.cabecera.ProveedorId, Model.cabecera.ProveedoresActivos, "Seleccione un proveedor")
+                        @Html.ValidationMessageFor(model => model.cabecera.ProveedorId, "", new { @class = "text-danger" })
+                    </div>
+                </td>
+                <td>
+                    @Html.LabelFor(model => model.cabecera.FechaEmision, htmlAttributes: new { @class = "control-label col-md-2" })
+                </td>
+                <td>
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.cabecera.FechaEmision, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.cabecera.FechaEmision, "", new { @class = "text-danger" })
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+        <div class="row">
+            <table class="table table-responsive">
+                <tr>
+                    <td>
+                        @Html.LabelFor(model => model.cabecera.NroReferencia, htmlAttributes: new { @class = "control-label col-md-2" })
+                    </td>
+                    <td>
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.cabecera.NroReferencia, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.cabecera.NroReferencia, "", new { @class = "text-danger" })
+                        </div>
+                    </td>
+                    <td>
+                        @Html.LabelFor(model => model.cabecera.Observaciones, htmlAttributes: new { @class = "control-label col-md-2" })
+                    </td>
+                    <td>
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.cabecera.Observaciones, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.cabecera.Observaciones, "", new { @class = "text-danger" })
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="row">
+            <table class="table table-responsive">
+                <tr>
+                    <td>
+                        @Html.LabelFor(model => model.cabecera.CantidadTotal, htmlAttributes: new { @class = "control-label col-md-2" })
+                    </td>
+                    <td class="alert-success">
+                        <div class="col-md-8">
+                            @Html.DisplayFor(model => model.cabecera.CantidadTotal, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.cabecera.CantidadTotal, "", new { @class = "text-danger" })
+                        </div>
+                    </td>
+                    <td>
+                        @Html.LabelFor(model => model.cabecera.MonedaOperacionId, htmlAttributes: new { @class = "control-label col-md-2" })
+                    </td>
+                    <td>
+                        <div class="col-md-8 DB-select-moneda">
+                            @Html.DropDownListFor(model => model.cabecera.MonedaOperacionId, Model.cabecera.MonedasActivas, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.cabecera.MonedaOperacionId, "", new { @class = "text-danger" })
+                        </div>
+                    </td>
+                    <td>
+                        @Html.LabelFor(model => model.cabecera.Cotizacion, htmlAttributes: new { @class = "control-label col-md-2" })
+                    </td>
+                    <td>
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.cabecera.Cotizacion, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.cabecera.Cotizacion, "", new { @class = "text-danger" })
+                        </div>
+                    </td>
+                    <td>
+                        @Html.LabelFor(model => model.cabecera.ImporteTotal, htmlAttributes: new { @class = "control-label col-md-2" })
+                    </td>
+                    <td class="alert-success">
+                        <div class="col-md-8">
+                            @Html.DisplayFor(model => model.cabecera.ImporteTotal, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.cabecera.ImporteTotal, "", new { @class = "text-danger" })
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        @*<div class="row">
+            <div class="col-md-offset-0 col-md-2">
+                <label class="control-label">Artículos cargados a partir del:</label>
+            </div>
+            <div class="col-md-offset-2 col-md-10">
+                <input class="form-control text-box single-line" data-val="true" data-val-date="The field Desde must be a date." data-val-required="La fecha de carga es obligatoria" id="FechaCarga" name="FechaCarga" type="date" value=now />
+            </div>
+        </div>*@
+        <div class="row">
+            <table class="table-responsive">
+                <tr>
+                    <td>
+                        <label class="control-label col-md-8">Artículos cargados a partir del:</label>
+                    </td>
+                    <td>
+                        <input class="form-control text-box single-line col-md-2" data-val="true" data-val-date="The field Desde must be a date." data-val-required="La fecha de carga es obligatoria" id="FechaCarga" name="FechaCarga" type="date" value=now />
+                    </td>
+                    <td>
+                        @*<button class="form-control btn-success" id="btnCargarArticulos">Cargar</button>*@
+                        <input type="button" class="form-control btn-success" id="btnCargarArticulos" value="Cargar"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        @Html.Partial("OCLineasCarga", Model)
+        @Html.Partial("OCLineasOtros", Model)
+
+        <div class="form-group">
+            <div class="col-md-offset-0 col-md-10">
+                <input type="submit" value="Crear" class="btn btn-default" />
+            </div>
+        </div>
+}
+
+
+
+<div class="col-md-offset-0 col-md-10">
+    @Html.ActionLink("Volver", "Index")
+</div>
+
+
+<script>
+    $("#btnCargarArticulos").click(function ()
+    {
+
+        //ProveedorId y FechaCarga debe corresponder con la estructura del parámetro que recibe
+        //el método ConsultarArticulosCargados del controller OrdenCompra (ver el Action)
+        var dataObject = { sProveedorId: $('#cabecera_ProveedorId').val(), sFechaCarga: $('#FechaCarga').val() };
+        $.ajax({
+            url: '@Url.Action("ConsultarArticulosCargados", "OrdenCompra")',
+            type: "GET",
+            data: dataObject,
+            datatype: "json",
+            success: function (result)
+            {
+                if (result.toString() == "") //Fracaso
+                {
+                    alert("Fracaso 1");
+                }
+                else //Éxito
+                {
+                    alert("Exito: " + result);
+                }
+            },
+            error: function (result)
+            {
+                alert("Error en btnCargarArticulos.click");
+            }
+        })
+    })
+
+</script>

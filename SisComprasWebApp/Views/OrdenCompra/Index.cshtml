@@ -1,0 +1,41 @@
+﻿@model System.Data.DataTable
+
+@{
+    ViewBag.Title = "Órdenes de Compra";
+}
+
+<h2>Órdenes de Compra</h2>
+<table class="table table-bordered table-striped">
+    <tr>
+        <th>Emisión</th>
+        <th>Proveedor</th>
+        <th>Número</th>
+        <th>Referencia</th>
+        <th>Cantidad</th>
+        <th>Moneda</th>
+        <th>Importe</th>
+
+    </tr>
+    @for (int i = 0; i < Model.Rows.Count; i++)
+    {
+        <tr>
+            @*No muestro ORDEN_COMPRA_CAB_ID*@
+            <td>@Model.Rows[i]["fecha_emision"]</td>
+            <td>@Model.Rows[i]["proveedor_nombre"]</td>
+            <td>@Model.Rows[i]["orden_compra_nro"]</td>
+            <td>@Model.Rows[i]["numero_referencia"]</td>
+            <td>@Model.Rows[i]["cantidad_pedida_total"]</td>
+            <td>@Model.Rows[i]["moneda_cod"]</td>
+            <td>@Model.Rows[i]["importe_total"]</td>
+            <td>
+                <a href="@Url.Action("Edit", "OrdenCompra", new { @id=Model.Rows[i]["orden_compra_cab_id"] })">Editar</a>
+                <a href="@Url.Action("Delete", "OrdenCompra", new { @id=Model.Rows[i]["orden_compra_cab_id"] })">Eliminar</a>
+            </td>
+        </tr>
+    }
+
+</table>
+
+<a href="@Url.Action("Create","OrdenCompra")">Nueva Orden de Compra</a>
+
+

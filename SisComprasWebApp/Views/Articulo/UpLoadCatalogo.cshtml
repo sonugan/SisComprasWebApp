@@ -1,0 +1,172 @@
+﻿@model System.Data.DataTable
+
+@{
+    ViewBag.Title = "Catálogo";
+}
+
+<h2>Previsualización</h2>
+
+@using (Html.BeginForm("UploadCatalogo", "Articulo", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    if (Model != null)
+    {
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="row">
+                    <div class="col-sm-2">Código</div>
+                    <div class="col-sm-1"><input type="number" id="inputColCodigo" name="ColCodigo" class="form-control" /></div>
+                    <div class="col-sm-2">Nombre</div>
+                    <div class="col-sm-1"><input type="number" id="inputColNombre" name="ColNombre" class="form-control" /></div>
+                    <div class="col-sm-2">Descripción</div>
+                    <div class="col-sm-1"><input type="number" id="inputColDesc" name="ColDesc" class="form-control" /></div>
+                    <div class="col-sm-2">Descripción 2</div>
+                    <div class="col-sm-1"><input type="number" id="inputColDesc2" name="ColDesc2" class="form-control" /></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="row">
+                    <div class="col-sm-2">Moneda</div>
+                    <div class="col-sm-1"><input type="number" id="inputColMoneda" name="ColMoneda" class="form-control" /></div>
+                    <div class="col-sm-2">Precio</div>
+                    <div class="col-sm-1"><input type="number" id="inputColPrecio" name="ColPrecio" class="form-control" /></div>
+                    <div class="col-sm-2">Cotización</div>
+                    <div class="col-sm-1"><input type="number" id="inputCColCotizacion" name="ColCotizacion" class="form-control" /></div>
+                    <div class="col-sm-2">Rubro</div>
+                    <div class="col-sm-1"><input type="number" id="inputColRubro" name="ColRubro" class="form-control" /></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="row">
+                    <div class="col-sm-2">RMB</div>
+                    <div class="col-sm-1"><input type="number" id="inputColRMB" name="ColRMB" class="form-control" /></div>
+                    <div class="col-sm-2">INNER</div>
+                    <div class="col-sm-1"><input type="number" id="inputColINNER" name="ColINNER" class="form-control" /></div>
+                    <div class="col-sm-2">CBM</div>
+                    <div class="col-sm-1"><input type="number" id="inputColCBM" name="ColCBM" class="form-control" /></div>
+                    <div class="col-sm-2">Uni X bulto</div>
+                    <div class="col-sm-1"><input type="number" id="inputColUnXBulto" name="ColUnXBulto" class="form-control" /></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="row">
+                    <div class="col-sm-2">Peso neto</div>
+                    <div class="col-sm-1"><input type="number" id="inputColPesoNeto" name="ColPesoNeto" class="form-control" /></div>
+                    <div class="col-sm-2">Peso bruto</div>
+                    <div class="col-sm-1"><input type="number" id="inputColPesoBruto" name="ColPesoBruto" class="form-control" /></div>
+                    <div class="col-sm-2">Cód. barras</div>
+                    <div class="col-sm-1"><input type="number" id="inputColCodBarras" name="ColCodBarras" class="form-control" /></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="row">
+                    <div class="col-sm-2">Obs. 1</div>
+                    <div class="col-sm-1"><input type="number" id="inputColObs1" name="ColObs1" class="form-control" /></div>
+                    <div class="col-sm-2">Obs. 2</div>
+                    <div class="col-sm-1"><input type="number" id="inputColObs2" name="ColObs2" class="form-control" /></div>
+                    <div class="col-sm-2">Obs. 3</div>
+                    <div class="col-sm-1"><input type="number" id="inputColObs3" name="ColObs3" class="form-control" /></div>
+                </div>
+            </div>
+        </div>
+
+        @*<div class="row">
+            <div class="col-md-12 col-sm-12">
+                <table class="def_columnas_archivo">
+                    <tr>
+                        <th>Código</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Descripción 2</th>
+                        <th>Moneda</th>
+                        <th>Precio</th>
+                        <th>Cotización</th>
+                        <th>Rubro</th>
+                        <th>RMB</th>
+                        <th>INNER</th>
+                        <th>CBM</th>
+                        <th>Un X bulto</th>
+                        <th>Peso neto</th>
+                        <th>Peso bruto</th>
+                        <th>Cód. barras</th>
+                        <th>Obs. 1</th>
+                        <th>Obs. 2</th>
+                        <th>Obs. 3</th>
+                    </tr>
+                    <tr>
+                        <td><input type="number" id="inputColCodigo" name="ColCodigo" class="form-control" /></td>
+                        <td><input type="number" id="inputColNombre" name="ColNombre" class="form-control" /></td>
+                        <td><input type="number" id="inputColDesc" name="ColDesc" class="form-control" /></td>
+                        <td><input type="number" id="inputColDesc2" name="ColDesc2" class="form-control" /></td>
+                        <td><input type="number" id="inputColMoneda" name="ColMoneda" class="form-control" /></td>
+                        <td><input type="number" id="inputColPrecio" name="ColPrecio" class="form-control" /></td>
+                        <td><input type="number" id="inputColCotizacion" name="ColCotizacion" class="form-control" /></td>
+                        <td><input type="number" id="inputColRubro" name="ColRubro" class="form-control" /></td>
+                        <td><input type="number" id="inputColRMB" name="ColRMB" class="form-control" /></td>
+                        <td><input type="number" id="inputColINNER" name="ColINNER" class="form-control" /></td>
+                        <td><input type="number" id="inputColCBM" name="ColCBM" class="form-control" /></td>
+                        <td><input type="number" id="inputColUnXBulto" name="ColUnXBulto" class="form-control" /></td>
+                        <td><input type="number" id="inputColPesoNeto" name="ColPesoNeto" class="form-control" /></td>
+                        <td><input type="number" id="inputColPesoBruto" name="ColPesoBruto" class="form-control" /></td>
+                        <td><input type="number" id="inputColCodBarras" name="ColCodBarras" class="form-control" /></td>
+                        <td><input type="number" id="inputColObs1" name="ColObs1" class="form-control" /></td>
+                        <td><input type="number" id="inputColObs2" name="ColObs2" class="form-control" /></td>
+                        <td><input type="number" id="inputColObs3" name="ColObs3" class="form-control" /></td>
+                    </tr>
+                </table>
+            </div>
+        </div>*@
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <table>
+                    <tr>
+                        <td>Proveedor:</td>
+                        <td>
+                            <div class="DB-select-proveedor">
+                                @Html.DropDownList("ddlProveedor", (List<SelectListItem>)ViewBag.Proveedores, "Seleccione un proveedor", new { @class = "form-control" })
+                            </div>
+                        </td>
+                        <td>Precios en moneda:</td>
+                        <td>
+                            <div class="DB-select-moneda">
+                                @Html.DropDownList("ddlMoneda", (List<SelectListItem>)ViewBag.Monedas, "Seleccione una moneda", new { @class = "form-control" })
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" value="Grabar catálogo" class="btn btn-success" />
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-sm-12 table-responsive" width="100%">
+                <table class="table table-bordered table-striped" id="tableCatalogo">
+                    @*@for (int i = 0; i < Model.Rows.Count; i++)*@
+                    @*Tomo 4 filas para previsualizar*@
+                    @for (int i = 0; i < 4; i++)
+                    {
+                        <tr>
+                            @for (int j = 0; j < Model.Columns.Count; j++)
+                            {
+                                <td>@Model.Rows[i][j]</td>
+                            }
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    }
+}

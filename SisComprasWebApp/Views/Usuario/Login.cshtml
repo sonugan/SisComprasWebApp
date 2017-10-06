@@ -1,0 +1,127 @@
+﻿<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.json.min.js"></script>
+<script src="~/Scripts/jquerysession.js"></script>
+
+<div class="modal fade" id="LoginModal" role="dialog">
+    <div class="modal-dialog">
+        <form class="form-horizontal">
+
+            <span> <img src="~/Content/Imagenes/Users.ico" class="IconoLogin" /> </span>
+
+            <div class="modal-header">
+                <div id="mensajes">
+
+                </div>
+            </div>
+
+            <br />
+            
+            <div>
+                @Html.Hidden("RedirectTo", Url.Action("Index", "Home"));
+            </div>
+
+            <div class="form-group">
+                <label for="lblUsuario" class="col-lg-3 control-label">Usuario:</label>
+                <input class="form-control" id="inpUsuario" placeholder="Usuario" type="text" style = "text-transform:uppercase">
+            </div>
+
+            <div class="form-group">
+                <label for="lblContrasena" class="col-lg-3 control-label">Contraseña:</label>
+                <input class="form-control" id="inpContrasena" placeholder="Contraseña" type="password">
+            </div>
+
+            <div class="modal-footer">
+                <a href="#" class="btn btn-primary btn-primary pull-left RbtnMargin" id="Login">Ingresar<span class="glyphicon glyphicon-ok"</span></a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<style>
+    .modal-dialog {
+        max-width: 480px;
+    }
+
+    .modal-dialog {
+        transform: translate(0, 50%) !important;
+        -ms-transform: translate(0, 50%) !important; /* IE 9 */
+        -webkit-transform: translate(0, 50%) !important; /* Safari y Chrome */
+    }
+
+    .RbtnMargin {
+        margin-left: 90px;
+    }
+
+    .failed {
+        text-align: center;
+        font-weight: bold;
+        font-family: "Times New Roman";
+        color: white;
+        background-color: red;
+    }
+
+    .IconoLogin {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        $("#LoginModal").modal({
+            packdrop: 'static'
+        })
+
+        $('#inpUsuario').focus();
+
+    });
+
+
+
+    $("#Login").click(function ()
+    {
+
+        //Login y Contrasena debe corresponder con la estructura del parámetro que recibe
+        //el método Login del controller Usuario (ver el Action)
+        var dataObject = { Usuario: $('#inpUsuario').val(), Contrasena: $('#inpContrasena').val() };
+        $.ajax({
+            url: '@Url.Action("Login", "Usuario")',
+            type: "POST",
+            data: dataObject,
+            datatype: "json",
+            success: function (result)
+            {
+                if (result.toString() == "") //Éxito
+                {
+                    //alert("OK");
+                    //$.session.set('UsuarioLogueado', 'AAA');//https://ciphertrick.com/2015/01/20/session-handling-using-jquery/
+                    $("#LoginModal").modal('hide');
+
+                    var url = $("#RedirectTo").val();
+                    location.href = url;
+                }
+                else //Fracaso
+                {
+                    //alert(result);
+                    $('#inpUsuario').val("");
+                    $('#inpContrasena').val("");
+                    $('#inpUsuario').focus();
+                    $("#mensajes").html('<div class="failed">' + result + '</div>');
+                    //$.session.set("UsuarioLogueado", "");//https://ciphertrick.com/2015/01/20/session-handling-using-jquery/
+                    //$.session('UsuarioLogueado', '');
+                }
+            },
+            error: function (result)
+            {
+                //alert("Error en Login.click");
+                $('#inpUsuario').val("");
+                $('#inpContrasena').val("");
+                $('#inpUsuario').focus();
+                $("#mensajes").html('<div class="failed">Error! Intente nuevamente.</div>');
+                //$.session.set('UsuarioLogueado', '');//https://ciphertrick.com/2015/01/20/session-handling-using-jquery/
+            }
+        })
+    })
+</script>

@@ -1,0 +1,32 @@
+﻿@model System.Data.DataTable
+@{
+    ViewBag.Title = "Proveedores";
+}
+
+
+<h2>Proveedores</h2>
+
+<table class="table table-bordered table-striped">
+    <tr>
+        <th>Código</th>
+        <th>Nombre</th>
+        <th>Activo</th>
+        <th></th>
+
+    </tr>
+    @for (int i = 0; i < Model.Rows.Count; i++)
+    {
+        <tr>@*No muestro PROVEEDOR_ID*@
+            <td>@Model.Rows[i]["proveedor_cod"]</td>
+            <td>@Model.Rows[i]["proveedor_nombre"]</td>
+            <td>@Model.Rows[i]["flag_activo"]</td>
+            <td>
+                <a href="@Url.Action("Edit", "Proveedor", new { @id=Model.Rows[i]["proveedor_id"] })">Editar</a>
+                <a href="@Url.Action("Delete", "Proveedor", new { @id=Model.Rows[i]["proveedor_id"] })">Eliminar</a>
+            </td>
+        </tr>
+    }
+
+</table>
+
+<a href="@Url.Action("Create","Proveedor")">Alta de proveedor</a>

@@ -1,0 +1,32 @@
+﻿@model System.Data.DataTable
+
+@{
+    ViewBag.Title = "Rubros";
+}
+
+<h2>Rubros</h2>
+<table class="table table-bordered table-striped">
+    <tr>
+        <th>Código</th>
+        <th>Nombre</th>
+        <th>Activo</th>
+        <th></th>
+
+    </tr>
+    @for (int i = 0; i < Model.Rows.Count; i++)
+    {
+        <tr>
+            @*No muestro RUBRO_ID*@
+            <td>@Model.Rows[i]["rubro_cod"]</td>
+            <td>@Model.Rows[i]["rubro_nombre"]</td>
+            <td>@Model.Rows[i]["flag_activo"]</td>
+            <td>
+                <a href="@Url.Action("Edit", "Rubro", new { @id=Model.Rows[i]["rubro_id"] })">Editar</a>
+                <a href="@Url.Action("Delete", "Rubro", new { @id=Model.Rows[i]["rubro_id"] })">Eliminar</a>
+            </td>
+        </tr>
+    }
+
+</table>
+
+<a href="@Url.Action("Create","Rubro")">Alta de rubro</a>

@@ -1,0 +1,153 @@
+﻿@*@model Modelos.CatalogoModel*@ 
+
+@{
+    ViewBag.Title = "Artículos";
+}
+
+<h2>Carga de catálogo</h2>
+
+@using (Html.BeginForm("Upload", "Articulo", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="row">
+        <div class="col-sm-12">
+            <table>
+                <tr>
+                    <td style="padding-left:55px;">Archivo:</td>
+                    <td>
+                        <input type="file" name="UploadedFile" class="form-control btn btn-default" />
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="submit" value="Cargar archivo" class="btn btn-default" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+}
+
+@Html.Partial("UpLoadCatalogo") @*todo lo de abajo va en la partial view. Y necesito armar un model con los datos
+                                de las columnas del excel para que la view devuelva ese model. La partial view
+                                tendría otro Html.BeginForm de forma tal que el submit me direccione a otra
+                                acción del ArticuloController*@
+
+@*@if (Model != null)
+{
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="row">
+                        <div class="col-sm-2">Código</div>
+                        <div class="col-sm-2">Nombre</div>
+                        <div class="col-sm-2">Descripción</div>
+                        <div class="col-sm-2">Descripción</div>
+                        <div class="col-sm-2">Descripción</div>
+                        <div class="col-sm-2">Descripción</div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="row">
+                        <div class="col-sm-2">Código</div>
+                        <div class="col-sm-2">Nombre</div>
+                        <div class="col-sm-2">Descripción</div>
+                        <div class="col-sm-2">Descripción</div>
+                        <div class="col-sm-2">Descripción</div>
+                        <div class="col-sm-2">Descripción</div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="row">
+                        <div class="col-sm-2">Código</div>
+                        <div class="col-sm-2">Nombre</div>
+                        <div class="col-sm-2">Descripción</div>
+                        <div class="col-sm-2">Descripción</div>
+                        <div class="col-sm-2">Descripción</div>
+                        <div class="col-sm-2">Descripción</div>
+                    </div>
+                </div>
+            </div>
+            <table class="def_columnas_archivo">
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Descripción 2</th>
+                    <th>Moneda</th>
+                    <th>Precio</th>
+                    <th>Cotización</th>
+                    <th>Rubro</th>
+                    <th>RMB</th>
+                    <th>INNER</th>
+                    <th>CBM</th>
+                    <th>Un X bulto</th>
+                    <th>Peso neto</th>
+                    <th>Peso bruto</th>
+                    <th>Cód. barras</th>
+                    <th>Obs. 1</th>
+                    <th>Obs. 2</th>
+                    <th>Obs. 3</th>
+                </tr>
+                <tr>
+                    <td><input type="number" id="inputColCodigo" class="form-control" /></td>
+                    <td><input type="number" id="inputColNombre" class="form-control" /></td>
+                    <td><input type="number" id="inputColDesc" class="form-control" /></td>
+                    <td><input type="number" id="inputColDesc2" class="form-control" /></td>
+                    <td><input type="number" id="inputColMoneda" class="form-control" /></td>
+                    <td><input type="number" id="inputColPrecio" class="form-control" /></td>
+                    <td><input type="number" id="inputColCotizacion" class="form-control" /></td>
+                    <td><input type="number" id="inputColRubro" class="form-control" /></td>
+                    <td><input type="number" id="inputColRMB" class="form-control" /></td>
+                    <td><input type="number" id="inputColINNER" class="form-control" /></td>
+                    <td><input type="number" id="inputColCBM" class="form-control" /></td>
+                    <td><input type="number" id="inputColUnXBulto" class="form-control" /></td>
+                    <td><input type="number" id="inputColPesoNeto" class="form-control" /></td>
+                    <td><input type="number" id="inputColPesoBruto" class="form-control" /></td>
+                    <td><input type="number" id="inputColCodBarras" class="form-control" /></td>
+                    <td><input type="number" id="inputColObs1" class="form-control" /></td>
+                    <td><input type="number" id="inputColObs2" class="form-control" /></td>
+                    <td><input type="number" id="inputColObs3" class="form-control" /></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 table-responsive" width="100%">
+            <table class="table table-bordered table-striped">
+                @for (int i = 0; i < Model.Rows.Count; i++)
+                {
+                    <tr>
+                        @for (int j = 0; j < Model.Columns.Count; j++)
+                        {
+                            <td>@Model.Rows[i][j]</td>
+                        }
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12" >
+            <table>
+                <tr>
+                    <td>Proveedor:</td>
+                    <td>
+                        <div class="DB-select-proveedor">
+                            @Html.DropDownList("ddlProveedor", (List<SelectListItem>)ViewBag.Proveedores, "Seleccione un proveedor", new { @class = "form-control" })
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="button" value="Cargar catálogo" class="btn btn-default" onclick="CargarCatalogo" />
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+}*@
+

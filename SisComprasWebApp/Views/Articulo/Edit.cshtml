@@ -1,0 +1,205 @@
+﻿@model Modelos.ArticuloModel
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Artículo</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ID)
+        @Html.HiddenFor(model => model.Version)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Codigo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-5">
+                @Html.EditorFor(model => model.Codigo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Codigo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Nombre, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Nombre, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Descripcion, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Descripcion, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Descripcion, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Activo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="SiNo-select">
+                    @*@Html.DropDownListFor(model => model.Activo,
+                        new List<SelectListItem>{
+                            new SelectListItem() {Text = "Si", Value="Si"},
+                            new SelectListItem() {Text = "No", Value="No"}},
+                        new { htmlAttributes = new { @class = "SiNo-select" } } )*@
+                    @Html.DropDownListFor(model => model.Activo, Model.Activos, Model.Activo)@*, new { @class = "ct-js-select ct-select-lg" })*@
+                </div>
+                @Html.ValidationMessageFor(model => model.Activo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProveedorId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="DB-select-proveedor">
+                    @*@Html.DropDownListFor(model => model.ProveedorNombre, Model.ProveedoresActivos)*@
+                    @Html.DropDownListFor(model => model.ProveedorId, Model.ProveedoresActivos, Model.ProveedorId)
+                </div>
+                @Html.ValidationMessageFor(model => model.ProveedorId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-1">
+                @*Esto es para empujar los controles hacia la derecha*@
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MonedaId, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8 DB-select-moneda">
+                        @*@Html.EditorFor(model => model.MonedaCod, new { htmlAttributes = new { @class = "form-control" } })*@
+                        @Html.DropDownListFor(model => model.MonedaId, Model.MonedasActivas, Model.MonedaId)
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MonedaId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PrecioEnMoneda, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-5">
+                        @Html.EditorFor(model => model.PrecioEnMoneda, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.PrecioEnMoneda, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Cotizacion, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-5">
+                        @Html.EditorFor(model => model.Cotizacion, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Cotizacion, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.RubroId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="DB-select-rubro">
+                    @*@Html.EditorFor(model => model.RubroNombre, new { htmlAttributes = new { @class = "form-control" } })*@
+                    @Html.DropDownListFor(model => model.RubroId, Model.RubrosActivos, Model.RubroId)
+                </div>
+                @Html.ValidationMessageFor(model => model.RubroId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-1">
+                @*Esto es para empujar los controles hacia la derecha*@
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CostoRMB, htmlAttributes: new { @class = "control-label col-md-5" })
+                    <div class="col-md-5">
+                        @Html.EditorFor(model => model.CostoRMB, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CostoRMB, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CostoINNER, htmlAttributes: new { @class = "control-label col-md-5" })
+                    <div class="col-md-5">
+                        @Html.EditorFor(model => model.CostoINNER, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.CostoINNER, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CostoCBM, htmlAttributes: new { @class = "control-label col-md-5" })
+                    <div class="col-md-5">
+                        @Html.EditorFor(model => model.CostoCBM, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.CostoCBM, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-1">
+                @*Esto es para empujar los controles hacia la derecha*@
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UniXbulto, htmlAttributes: new { @class = "control-label col-md-5" })
+                    <div class="col-md-5">
+                        @Html.EditorFor(model => model.UniXbulto, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.UniXbulto, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PesoBruto, htmlAttributes: new { @class = "control-label col-md-5" })
+                    <div class="col-md-5">
+                        @Html.EditorFor(model => model.PesoBruto, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.PesoBruto, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PesoNeto, htmlAttributes: new { @class = "control-label col-md-5" })
+                    <div class="col-md-5">
+                        @Html.EditorFor(model => model.PesoNeto, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.PesoNeto, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PendienteRecep, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DisplayFor(model => model.PendienteRecep, new { htmlAttributes = new { @class = "form-control" } })
+                @*@Html.ValidationMessageFor(model => model.PendienteRecep, "", new { @class = "text-danger" })*@
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Guardar" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+<div>
+    @Html.ActionLink("Volver", "Index")
+</div>

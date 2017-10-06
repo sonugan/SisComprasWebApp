@@ -1,0 +1,162 @@
+﻿/* https://www.w3schools.com/css/ */
+
+body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+    background-image: url(~/Content/Imagenes/fondo_principal.png);
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+select {
+    max-width: 280px;
+    background: transparent;
+    width: 100%;
+    padding: 5px;
+    font-size: 16px;
+    line-height: 1;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 34px;
+    -webkit-appearance: none;
+}
+
+/* DropDown con los valores Si y No */
+/* (toma el estilo select y piso el width) */
+.SiNo-select select {
+    width: 68px;
+}
+
+/* DropDown de monedas */
+/* (toma el estilo select y piso el width) */
+.DB-select-moneda select {
+    width: 90px;
+}
+
+/* DropDown de proveedores */
+/* (toma el estilo select y piso el backcolor) */
+.DB-select-proveedor select {
+    background-color:burlywood
+}
+
+/* DropDown de rubros */
+/*.DB-select-rubro select {
+    max-width: 680px;
+    background: transparent;
+    width: 100%;
+    padding: 5px;
+    font-size: 16px;
+    line-height: 1;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 34px;
+    -webkit-appearance: none;
+}*/
+
+/* DropDown de localidades */
+/*.DB-select-localidad select {
+    max-width: 680px;
+    background: transparent;
+    width: 100%;
+    padding: 5px;
+    font-size: 16px;
+    line-height: 1;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 34px;
+    -webkit-appearance: none;
+}*/
+
+/* DropDown de provincias */
+/*.DB-select-provincia select {
+    max-width: 680px;
+    background: transparent;
+    width: 100%;
+    padding: 5px;
+    font-size: 16px;
+    line-height: 1;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 34px;
+    -webkit-appearance: none;
+}*/
+
+/* DropDown de países */
+/*.DB-select-pais select {
+    max-width: 680px;
+    background: transparent;
+    width: 100%;
+    padding: 5px;
+    font-size: 16px;
+    line-height: 1;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 34px;
+    -webkit-appearance: none;
+}*/
+
+/* DropDown de tipos de domicilio */
+/*.DB-select-tipoDomi select {
+    max-width: 680px;
+    background: transparent;
+    width: 100%;
+    padding: 5px;
+    font-size: 16px;
+    line-height: 1;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    height: 34px;
+    -webkit-appearance: none;
+}*/
+
+table.def_columnas_archivo {
+    border: solid 5px #006CFF;
+    margin: 0px;
+    padding: 0px;
+    border-spacing: 1px;
+    border-collapse: collapse;
+    line-height: 22px;
+    font-size: 13px;
+    font-family: Arial, Verdana, Tahoma, Helvetica, sans-serif;
+    font-weight: 400;
+    text-decoration: none;
+    color: #0018ff;
+    white-space: pre-wrap;
+}
+
+    table.def_columnas_archivo th {
+        padding: 2px;
+        background-color: #98dcff;
+        border: solid 2px #006CFF;
+    }
+
+    table.def_columnas_archivo td {
+        padding: 2px;
+        border: solid 1px #006CFF;
+        max-width: 5px;
+    }
+
+    table.def_columnas_archivo tr {
+        margin: 0;
+        padding: 4px;
+    }
+
+

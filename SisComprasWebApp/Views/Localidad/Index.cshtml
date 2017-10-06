@@ -1,0 +1,32 @@
+﻿@model System.Data.DataTable
+
+@{
+    ViewBag.Title = "Localidades";
+}
+
+<h2>Localidades</h2>
+<table class="table table-bordered table-striped">
+    <tr>
+        <th>Código</th>
+        <th>Nombre</th>
+        <th>Activo</th>
+        <th></th>
+
+    </tr>
+    @for (int i = 0; i < Model.Rows.Count; i++)
+    {
+        <tr>
+            @*No muestro LOCALIDAD_ID*@
+            <td>@Model.Rows[i]["localidad_cod"]</td>
+            <td>@Model.Rows[i]["localidad_nombre"]</td>
+            <td>@Model.Rows[i]["flag_activo"]</td>
+            <td>
+                <a href="@Url.Action("Edit", "Localidad", new { @id=Model.Rows[i]["localidad_id"] })">Editar</a>
+                <a href="@Url.Action("Delete", "Localidad", new { @id=Model.Rows[i]["localidad_id"] })">Eliminar</a>
+            </td>
+        </tr>
+    }
+
+</table>
+
+<a href="@Url.Action("Create","Localidad")">Alta de localidad</a>

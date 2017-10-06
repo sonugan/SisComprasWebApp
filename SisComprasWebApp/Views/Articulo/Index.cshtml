@@ -1,0 +1,68 @@
+﻿@model System.Data.DataTable
+
+@{
+    ViewBag.Title = "Artículos";
+}
+
+<h2>Artículos</h2>
+<table>
+    <tr>
+        <td>
+            <a href="@Url.Action("Create","Articulo")">Alta de artículo</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <a href="@Url.Action("UpLoad","Articulo")">Carga de artículos</a>
+        </td>
+    </tr>
+</table>
+<table class="table table-bordered table-striped">
+    <tr>
+        <th>Código</th>
+        <th>Proveedor</th>
+        <th>Código</th>
+        <th>Artículo</th>
+        <th>Moneda</th>
+        <th>Precio</th>
+        <th>Activo</th>
+        <th>Pendiente</th>
+        <th></th>
+
+    </tr>
+    @for (int i = 0; i < Model.Rows.Count; i++)
+    {
+        <tr>
+            <td>@Model.Rows[i]["proveedor_cod"]</td>
+            <td>@Model.Rows[i]["proveedor_nombre"]</td>
+            <td>@Model.Rows[i]["articulo_cod"]</td>
+            <td>@Model.Rows[i]["articulo_nombre"]</td>
+            <td>@Model.Rows[i]["moneda_cod"]</td>
+            <td style="text-align:right;">@string.Format("{0:N2}", @Model.Rows[i]["precio_en_moneda"]) </td>
+            <td> @Model.Rows[i]["flag_activo"] </td>
+            <td style = "text-align:right;" >@string.Format("{0:N0}", @Model.Rows[i]["pendiente_recepcion"]) </td>
+            <td>
+                <a href="@Url.Action("Edit", "Articulo", new { @id=Model.Rows[i]["articulo_x_proveedor_id"] })">Editar</a>
+                <a href="@Url.Action("Delete", "Articulo", new { @id=Model.Rows[i]["articulo_x_proveedor_id"] })">Eliminar</a>
+                <a href="@Url.Action("MostrarImagen", "Articulo", new { @id=Model.Rows[i]["articulo_x_proveedor_id"] })">Ver imagen</a>
+            </td>
+        </tr>
+    }
+
+</table>
+
+<table>
+    <tr>
+        <td>
+            <a href="@Url.Action("Create","Articulo")">Alta de artículo</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <a href="@Url.Action("UpLoad","Articulo")">Carga de artículos</a>
+        </td>
+    </tr>
+</table>
+
+
+

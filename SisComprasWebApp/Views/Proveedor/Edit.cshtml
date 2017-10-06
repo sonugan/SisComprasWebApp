@@ -1,0 +1,130 @@
+﻿@model Modelos.ProveedorModel
+
+@{
+    ViewBag.Title = "Proveedor";
+}
+
+<h2>Modificar</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="form-horizontal">
+        <h4>Proveedor</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ID)
+        @Html.HiddenFor(model => model.Version)
+        @Html.HiddenFor(model => model.domicilio.DomicilioId)
+        @Html.HiddenFor(model => model.domicilio.FlagPrimario)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Codigo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Codigo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Codigo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Nombre, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Nombre, new { htmlAttributes = new { @class = "form-control", @style = "text-transform:capitalize" } })
+                @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Descripcion, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Descripcion, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Descripcion, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Activo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="SiNo-select">
+                    @*@Html.DropDownListFor(model => model.Activo,
+                    new List<SelectListItem>{
+                        new SelectListItem() {Text = "Si", Value="Si"},
+                        new SelectListItem() {Text = "No", Value="No"}},
+                    new { htmlAttributes = new { @class = "SiNo-select" } } )*@
+                    @Html.DropDownListFor(model => model.Activo, Model.Activos)@*, new { @class = "ct-js-select ct-select-lg" })*@
+                </div>
+                @Html.ValidationMessageFor(model => model.Activo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @*https://www.jose-aguilar.com/scripts/css/bootstrap/3.1.1/grids.php*@
+
+        <div class="row">
+            <div class="form-group col-md-4 col-sm-4">
+                @Html.LabelFor(model => model.domicilio.DomicilioTipoCod, htmlAttributes: new { @class = "control-label col-md-3 col-sm-3" })
+                <div class="col-md-8 col-sm-8">
+                    <div class="DB-select-tipoDomi">
+                        @Html.DropDownListFor(model => model.domicilio.DomicilioTipoCod, Model.domicilio.TiposDomicilio, Model.domicilio.DomicilioTipoCod)
+                    </div>
+                    @Html.ValidationMessageFor(model => model.domicilio.DomicilioTipoCod, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group col-md-4 col-sm-4">
+                @Html.LabelFor(model => model.domicilio.Direccion, htmlAttributes: new { @class = "control-label col-md-3 col-sm-3" })
+                <div class="col-md-8 col-sm-8">
+                    @Html.EditorFor(model => model.domicilio.Direccion, new { htmlAttributes = new { @class = "form-control", @style = "text-transform:capitalize" } })
+                    @Html.ValidationMessageFor(model => model.domicilio.Direccion, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group col-md-4 col-sm-4">
+                @Html.LabelFor(model => model.domicilio.CodigoPostal, htmlAttributes: new { @class = "control-label col-md-3 col-sm-3" })
+                <div class="col-md-4 col-sm-4">
+                    @Html.EditorFor(model => model.domicilio.CodigoPostal, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.domicilio.CodigoPostal, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-md-4 col-sm-4">
+                @Html.LabelFor(model => model.domicilio.LocalidadId, htmlAttributes: new { @class = "control-label col-md-3 col-sm-3" })
+                <div class="col-md-8 col-sm-8">
+                    <div class="DB-select-localidad">
+                        @Html.DropDownListFor(model => model.domicilio.LocalidadId, Model.domicilio.LocalidadesActivas, Model.domicilio.LocalidadId)
+                    </div>
+                    @Html.ValidationMessageFor(model => model.domicilio.LocalidadId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group col-md-4 col-sm-4">
+                @Html.LabelFor(model => model.domicilio.ProvinciaId, htmlAttributes: new { @class = "control-label col-md-3 col-sm-3" })
+                <div class="col-md-8 col-sm-8">
+                    <div class="DB-select-provincia">
+                        @Html.DropDownListFor(model => model.domicilio.ProvinciaId, Model.domicilio.ProvinciasActivas, Model.domicilio.ProvinciaId)
+                    </div>
+                    @Html.ValidationMessageFor(model => model.domicilio.ProvinciaId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group col-md-4 col-sm-4">
+                @Html.LabelFor(model => model.domicilio.PaisId, htmlAttributes: new { @class = "control-label col-md-3 col-sm-3" })
+                <div class="col-md-8 col-sm-8">
+                    <div class="DB-select-pais">
+                        @Html.DropDownListFor(model => model.domicilio.PaisId, Model.domicilio.PaisesActivos, Model.domicilio.PaisId)
+                    </div>
+                    @Html.ValidationMessageFor(model => model.domicilio.PaisId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Guardar" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Volver", "Index")
+</div>
