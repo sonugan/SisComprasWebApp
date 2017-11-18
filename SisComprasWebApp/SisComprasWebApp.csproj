@@ -228,6 +228,39 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\css\dataTables.bootstrap.css" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\css\dataTables.bootstrap.min.css" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\css\dataTables.bootstrap4.css" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\css\dataTables.bootstrap4.min.css" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\css\dataTables.foundation.css" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\css\dataTables.foundation.min.css" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\css\dataTables.jqueryui.css" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\css\dataTables.jqueryui.min.css" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\css\dataTables.semanticui.css" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\css\dataTables.semanticui.min.css" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\css\jquery.dataTables.css" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\css\jquery.dataTables.min.css" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\images\sort_asc.png" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\images\sort_asc_disabled.png" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\images\sort_both.png" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\images\sort_desc.png" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\images\sort_desc_disabled.png" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\js\dataTables.bootstrap.js" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\js\dataTables.bootstrap.min.js" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\js\dataTables.bootstrap4.js" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\js\dataTables.bootstrap4.min.js" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\js\dataTables.foundation.js" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\js\dataTables.foundation.min.js" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\js\dataTables.jqueryui.js" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\js\dataTables.jqueryui.min.js" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\js\dataTables.semanticui.js" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\js\dataTables.semanticui.min.js" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\js\jquery.dataTables.js" />
+    <Content Include="Scripts\DataTables\DataTables-1.10.16\js\jquery.dataTables.min.js" />
+    <Content Include="Scripts\DataTables\datatables.css" />
+    <Content Include="Scripts\DataTables\datatables.js" />
+    <Content Include="Scripts\DataTables\datatables.min.css" />
+    <Content Include="Scripts\DataTables\datatables.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -238,6 +271,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\Views\ordenDeCompra.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -276,17 +310,36 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\ErrorSession.cshtml" />
+    <Content Include="Views\OrdenCompra\Create.cshtml" />
+    <Content Include="Views\OrdenCompra\Index.cshtml" />
+    <Content Include="Views\OrdenCompra\OCLineasCarga.cshtml" />
+    <Content Include="Views\OrdenCompra\OCLineasOtros.cshtml" />
+    <Content Include="Views\Articulo\Create.cshtml" />
+    <Content Include="Views\Articulo\Edit.cshtml" />
+    <Content Include="Views\Articulo\Index.cshtml" />
+    <Content Include="Views\Articulo\MostrarImagen.cshtml" />
+    <Content Include="Views\Articulo\UpLoad.cshtml" />
+    <Content Include="Views\Articulo\UpLoadCatalogo.cshtml" />
+    <Content Include="Views\Localidad\Create.cshtml" />
+    <Content Include="Views\Localidad\Edit.cshtml" />
+    <Content Include="Views\Localidad\Index.cshtml" />
+    <Content Include="Views\Pais\Create.cshtml" />
+    <Content Include="Views\Pais\Edit.cshtml" />
+    <Content Include="Views\Pais\Index.cshtml" />
+    <Content Include="Views\Proveedor\Create.cshtml" />
+    <Content Include="Views\Proveedor\Edit.cshtml" />
+    <Content Include="Views\Proveedor\Index.cshtml" />
+    <Content Include="Views\Provincia\Create.cshtml" />
+    <Content Include="Views\Provincia\Edit.cshtml" />
+    <Content Include="Views\Provincia\Index.cshtml" />
+    <Content Include="Views\Rubro\Create.cshtml" />
+    <Content Include="Views\Rubro\Edit.cshtml" />
+    <Content Include="Views\Rubro\Index.cshtml" />
+    <Content Include="Views\Usuario\Login.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Articulo\" />
-    <Folder Include="Views\Localidad\" />
-    <Folder Include="Views\OrdenCompra\" />
-    <Folder Include="Views\Pais\" />
-    <Folder Include="Views\Proveedor\" />
-    <Folder Include="Views\Provincia\" />
-    <Folder Include="Views\Rubro\" />
-    <Folder Include="Views\Usuario\" />
+    <Folder Include="Content\Imagenes\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

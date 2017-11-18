@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Modelos;
 using AccesoDatos;
 using System.Data;
+using Modelos.Dtos;
 
 namespace SisCompras.BL
 {
@@ -189,7 +190,7 @@ namespace SisCompras.BL
             finally { }
         }
 
-        public DataTable ConsultarArticulosCarga(string sProveedorId, string sFechaCarga)
+        public List<ArticuloModel> ConsultarArticulosCarga(string sProveedorId, string sFechaCarga)
         {
 
             AplicacionLog.Logueo l_log_Objeto = new AplicacionLog.Logueo();
@@ -198,12 +199,10 @@ namespace SisCompras.BL
             try
             {
                 ArticuloDAO l_dao_Articulo = new ArticuloDAO();
-                DataTable l_dt_Articulos = new DataTable();
-
+                
                 l_log_Objeto.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_DEBUG, "Ingresando", "ArticuloBL.cs", "ConsultarArticulosCarga");
-
-                l_dt_Articulos = l_dao_Articulo.ConsultarArticulosCarga(sProveedorId, sFechaCarga);
-                return l_dt_Articulos;
+                
+                return l_dao_Articulo.ConsultarArticulosCarga(sProveedorId, sFechaCarga); 
 
             }
             catch (Exception miEx)
@@ -374,5 +373,31 @@ namespace SisCompras.BL
             }
             finally { }
         }
+
+        //private IList<ArticuloModel> BaseSearch(DataTableAjaxPostModel model, out int filteredResultsCount, out int totalResultsCount)
+        //{
+        //    var searchBy = (model.search != null) ? model.search.value : null;
+        //    var take = model.length;
+        //    var skip = model.start;
+
+        //    string sortBy = "";
+        //    bool sortDir = true;
+
+        //    if (model.order != null)
+        //    {
+        //        // in this example we just default sort on the 1st column
+        //        sortBy = model.columns[model.order[0].column].data;
+        //        sortDir = model.order[0].dir.ToLower() == "asc";
+        //    }
+
+        //    // search the dbase taking into consideration table sorting and paging
+        //    return new List<ArticuloModel>();//GetDataFromDbase(searchBy, take, skip, sortBy, sortDir, out filteredResultsCount, out totalResultsCount);
+        //    //if (result == null)
+        //    //{
+        //    //    // empty collection...
+        //    //    return new List<ArticuloModel>();
+        //    //}
+        //    //return result;
+        //}
     }
 }

@@ -110,6 +110,8 @@ namespace Modelos
         [DBColumnaDynamicLength("articulos_x_proveedores", "observaciones_3")]
         public string Observaciones3 { get; set; }
 
+        public Foto Foto { get; set; }
+
         public IEnumerable<SelectListItem> Activos { get; set; }
 
         //https://www.codeproject.com/Questions/805945/how-to-fill-dropdownlist-from-database-without-usi

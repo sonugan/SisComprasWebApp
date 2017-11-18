@@ -7,6 +7,8 @@ using Modelos;
 using System.Data;
 using SisCompras.BL;
 using System.Configuration;
+using SisComprasWebApp.Models;
+using Modelos.Dtos;
 
 namespace SisComprasWebApp.Controllers
 {
@@ -181,9 +183,9 @@ namespace SisComprasWebApp.Controllers
                 }
 
                 ArticuloBL l_bl_Articulo = new ArticuloBL();
-                DataTable dt = l_bl_Articulo.ConsultarArticulosCarga(sProveedorId, sFechaCarga);
+                List<ArticuloModel> articulos = l_bl_Articulo.ConsultarArticulosCarga(sProveedorId, sFechaCarga);
 
-                return View(dt);
+                return View(articulos);
             }
             catch (Exception miEx)
             {
@@ -237,9 +239,22 @@ namespace SisComprasWebApp.Controllers
 
                 ArticuloBL l_bl_Articulo = new ArticuloBL();
 
-                DataTable dt = l_bl_Articulo.ConsultarArticulosCarga(sProveedorId, sFechaCarga);
+                var articulos = l_bl_Articulo.ConsultarArticulosCarga(sProveedorId, sFechaCarga)
+                    .Select(a => new
+                    {
+                        Codigo = a.Codigo,
+                        Nombre = a.Nombre,
+                        Descripcion = a.Descripcion,
+                        Foto = "\\<img src='data:image/jpg;base64," + a.Foto.ToBase64 + "' style='height:150px; width:150px'\\>"
+                    });
 
-                return Json(dt, JsonRequestBehavior.AllowGet);
+                //return Json(articulos, JsonRequestBehavior.AllowGet);
+
+                return Json(
+                    new
+                    {
+                        data = articulos
+                    }, JsonRequestBehavior.AllowGet);
 
             }
             catch (Exception miEx)
@@ -254,5 +269,22 @@ namespace SisComprasWebApp.Controllers
             finally { }
         }
 
+
+        //public JsonResult CustomServerSideSearchAction(DataTableAjaxPostModel model)
+        //{
+        //    // action inside a standard controller
+        //    int filteredResultsCount;
+        //    int totalResultsCount;
+        //    var res = new List<ArticuloModel>();//YourCustomSearchFunc(model, out filteredResultsCount, out totalResultsCount);
+
+        //    return Json(new
+        //    {
+        //        // this is what datatables wants sending back
+        //        draw = model.draw,
+        //        recordsTotal = 10,//totalResultsCount,
+        //        recordsFiltered = 10,// filteredResultsCount,
+        //        data = res// result
+        //    });
+        //}
     }
 }

@@ -403,7 +403,7 @@ namespace AccesoDatos
             finally { }
         }
 
-        public DataTable ConsultarArticulosCarga(string sProveedorId, string sFechaCarga)
+        public List<ArticuloModel> ConsultarArticulosCarga(string sProveedorId, string sFechaCarga)
         {
             AplicacionLog.Logueo l_log_Objeto = new AplicacionLog.Logueo();
             string l_s_Mensaje = "";
@@ -416,7 +416,7 @@ namespace AccesoDatos
                 string sMMDDYYYYCarga = sFechaCarga.Substring(5, 2) + "/" + sFechaCarga.Substring(8, 2) + "/" + sFechaCarga.Substring(0, 4);
                 DataTable l_dt_Articulos = new DataTable();
                 string l_s_stSql = "SELECT articulo_x_proveedor_id, articulo_cod, articulo_nombre,";
-                l_s_stSql += " moneda_cod, precio_en_moneda";
+                l_s_stSql += " moneda_id, moneda_cod, precio_en_moneda";
                 l_s_stSql += " FROM vw_articulos";
                 l_s_stSql += " WHERE proveedor_id = " + sProveedorId;
                 l_s_stSql += " AND fecha_carga >= CAST('" + sMMDDYYYYCarga + "' AS DATE)";
@@ -429,7 +429,22 @@ namespace AccesoDatos
                     OdbcDataAdapter l_da_Articulos = new OdbcDataAdapter(l_s_stSql, odbcConn);
                     l_da_Articulos.Fill(l_dt_Articulos);
                 }
-                return l_dt_Articulos;
+
+                List<ArticuloModel> articulos = new List<ArticuloModel>();
+                foreach(DataRow row in l_dt_Articulos.Rows)
+                {
+                    articulos.Add(new ArticuloModel()
+                    {
+                        ID = row["articulo_x_proveedor_id"] != null ? Convert.ToInt32(row["articulo_x_proveedor_id"]) : 0,
+                        Codigo = row["articulo_cod"] != null ? row["articulo_cod"].ToString() : null,
+                        Nombre = row["articulo_nombre"] != null ? row["articulo_nombre"].ToString() : null,
+                        MonedaId = row["moneda_id"] != null ? Convert.ToInt32(row["moneda_id"]) : 0,
+                        PrecioEnMoneda = row["precio_en_moneda"] != null ? Convert.ToDecimal(row["precio_en_moneda"]) : 0,
+                        Foto = new Foto(@"C:\gaston\proyectos\SisComprasWebApp\SisComprasWebApp\Fotos\producto1.jpg")                        
+                    });
+                }
+
+                return articulos;
 
             }
             catch (Exception miEx)
@@ -949,6 +964,6 @@ namespace AccesoDatos
             }
             finally { }
         }
-
+        
     }
 }
