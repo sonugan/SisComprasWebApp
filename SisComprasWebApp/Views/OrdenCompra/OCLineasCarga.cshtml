@@ -1,20 +1,30 @@
 ﻿@model Modelos.OrdenCompraModel
 
-<h2>Artículos cargados</h2>
+<h2>Lista de Artículos</h2>
 
 <div class="form-horizontal">
     <div class="form-group">
-        <div class="col-md-2">
+        <div class="col-md-4">
             <label class="control-label col-md-8">Artículos cargados a partir del:</label>
         </div>
         <div class="col-md-2">
-            <input class="form-control text-box single-line col-md-2" data-val="true" data-val-date="The field Desde must be a date." data-val-required="La fecha de carga es obligatoria" id="FechaCarga" name="FechaCarga" type="date" value=now />
+            <input class="form-control text-box single-line col-md-2" data-val="true" data-val-date="The field Desde must be a date." data-val-required="La fecha de carga desde es obligatoria" id="FechaCargaDesde" name="FechaCargaDesde" type="date" value=now />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-4">
+            <label class="control-label col-md-8">Artículos cargados luego del:</label>
         </div>
         <div class="col-md-2">
-            <input type="button" class="form-control btn-success" id="btnCargarArticulos" value="Cargar" />
+            <input class="form-control text-box single-line col-md-2" data-val="true" data-val-date="The field Desde must be a date." data-val-required="La fecha de carga hasta es obligatoria" id="FechaCargaHasta" name="FechaCargaHasta" type="date" value=now />
+        </div>
+        <div class="col-md-2">
+            <input type="button" class="form-control btn-success" id="btnCargarArticulos" value="Filtrar" />
         </div>
     </div>
 </div>
+
+<hr />
 
 <table id="productosActuales" class="display" cellspacing="0" width="100%">
     <thead>

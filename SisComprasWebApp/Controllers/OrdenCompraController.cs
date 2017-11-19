@@ -234,7 +234,7 @@ namespace SisComprasWebApp.Controllers
         }
 
         [HttpGet]
-        public ActionResult ConsultarArticulosCargados(string sProveedorId, string sFechaCarga)
+        public ActionResult ConsultarArticulosCargados(string sProveedorId, string sFechaCargaDesde, string sFechaCargaHasta)
         {
             AplicacionLog.Logueo l_log_Objeto = new AplicacionLog.Logueo();
             string l_s_Mensaje = "";
@@ -273,7 +273,7 @@ namespace SisComprasWebApp.Controllers
 
                 ArticuloBL l_bl_Articulo = new ArticuloBL();
 
-                var articulos = l_bl_Articulo.ConsultarArticulosCarga(sProveedorId, sFechaCarga)
+                var articulos = l_bl_Articulo.ConsultarArticulosCarga(sProveedorId, sFechaCargaDesde, sFechaCargaHasta)
                     .Select(a => new
                     {
                         Codigo = a.Codigo,

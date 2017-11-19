@@ -2,7 +2,7 @@
 var ordenDeCompra = (function () {
 
     var getUrlConsultaArticulos = function () {
-        return 'ConsultarArticulosCargados?sProveedorId=' + $('#cabecera_ProveedorId').val() + "&sFechaCarga=" + $('#FechaCarga').val()
+        return 'ConsultarArticulosCargados?sProveedorId=' + $('#cabecera_ProveedorId').val() + "&sFechaCargaDesde=" + $('#FechaCargaDesde').val() + "&sFechaCargaHasta=" + $('#FechaCargaHasta').val()
     }
 
     var tablaDeProductosActuales;

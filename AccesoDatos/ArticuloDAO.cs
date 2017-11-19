@@ -403,35 +403,45 @@ namespace AccesoDatos
             finally { }
         }
 
-        public List<ArticuloModel> ConsultarArticulosCarga(string sProveedorId, string sFechaCarga)
+        public List<ArticuloModel> ConsultarArticulosCarga(string sProveedorId, string sFechaCargaDesde, string sFechaCargaHasta = "")
         {
-            AplicacionLog.Logueo l_log_Objeto = new AplicacionLog.Logueo();
-            string l_s_Mensaje = "";
+            AplicacionLog.Logueo logger = new AplicacionLog.Logueo();
+            string mensaje = "";
 
             try
             {
-                l_log_Objeto.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_DEBUG, "Ingresando", "ArticuloDAO.cs", "ConsultarArticulosCarga");
+                logger.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_DEBUG, "Ingresando", "ArticuloDAO.cs", "ConsultarArticulosCarga");
 
                 //Viene en formato YYYY-mm-DD y lo paso a formato mm/DD/YYYY
-                string sMMDDYYYYCarga = sFechaCarga.Substring(5, 2) + "/" + sFechaCarga.Substring(8, 2) + "/" + sFechaCarga.Substring(0, 4);
-                DataTable l_dt_Articulos = new DataTable();
-                string l_s_stSql = "SELECT articulo_x_proveedor_id, articulo_cod, articulo_nombre,";
-                l_s_stSql += " moneda_id, moneda_cod, precio_en_moneda";
-                l_s_stSql += " FROM vw_articulos";
-                l_s_stSql += " WHERE proveedor_id = " + sProveedorId;
-                l_s_stSql += " AND fecha_carga >= CAST('" + sMMDDYYYYCarga + "' AS DATE)";
-                l_s_stSql += " ORDER BY articulo_cod";
-                l_log_Objeto.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_DEBUG, l_s_stSql, "ArticuloDAO.cs", "ConsultarArticulosCarga");
+                
+                DataTable dt = new DataTable();
+                string sql = "SELECT articulo_x_proveedor_id, articulo_cod, articulo_nombre,";
+                sql += " moneda_id, moneda_cod, precio_en_moneda";
+                sql += " FROM vw_articulos";
+                sql += " WHERE proveedor_id = " + sProveedorId;
+
+                DateTime fechaCarga = new DateTime();
+                if(DateTime.TryParse(sFechaCargaDesde, out fechaCarga))
+                {
+                    sql += " AND fecha_carga >= CAST('" + fechaCarga.ToString("MM/dd/yyyy") + "' AS DATE)";
+                }
+
+                if (DateTime.TryParse(sFechaCargaHasta, out fechaCarga))
+                {
+                    sql += " AND fecha_carga < CAST('" + fechaCarga.ToString("MM/dd/yyyy") + "' AS DATE)";
+                }
+                sql += " ORDER BY articulo_cod";
+                logger.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_DEBUG, sql, "ArticuloDAO.cs", "ConsultarArticulosCarga");
 
                 using (OdbcConnection odbcConn = new OdbcConnection(connectionString))
                 {
                     odbcConn.Open();
-                    OdbcDataAdapter l_da_Articulos = new OdbcDataAdapter(l_s_stSql, odbcConn);
-                    l_da_Articulos.Fill(l_dt_Articulos);
+                    OdbcDataAdapter adapter = new OdbcDataAdapter(sql, odbcConn);
+                    adapter.Fill(dt);
                 }
 
                 List<ArticuloModel> articulos = new List<ArticuloModel>();
-                foreach(DataRow row in l_dt_Articulos.Rows)
+                foreach(DataRow row in dt.Rows)
                 {
                     articulos.Add(new ArticuloModel()
                     {
@@ -449,9 +459,9 @@ namespace AccesoDatos
             }
             catch (Exception miEx)
             {
-                l_s_Mensaje = miEx.Message.ToString();
-                System.Diagnostics.Debug.WriteLine(l_s_Mensaje);
-                l_log_Objeto.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_ERROR, l_s_Mensaje, "ArticuloDAO.cs", "ConsultarArticulosCarga");
+                mensaje = miEx.Message.ToString();
+                System.Diagnostics.Debug.WriteLine(mensaje);
+                logger.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_ERROR, mensaje, "ArticuloDAO.cs", "ConsultarArticulosCarga");
                 return null;
             }
             finally { }
