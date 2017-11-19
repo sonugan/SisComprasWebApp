@@ -28,8 +28,8 @@
             <td>@ordenDeCompra.CodigoMonedaOpearcion</td>
             <td>@ordenDeCompra.ImporteTotal</td>
             <td>
-                <a href="@Url.Action("Edit", "OrdenCompra", new { @id=ordenDeCompra.Id })">Editar</a>
-                <a href="@Url.Action("Delete", "OrdenCompra", new { @id=ordenDeCompra.Id })">Eliminar</a>
+                <a href="@Url.Action("Edit", "OrdenCompra", new { @ordenCompraId=ordenDeCompra.Id })">Editar</a>
+                <a href="@Url.Action("Delete", "OrdenCompra", new { @ordenCompraId=ordenDeCompra.Id })">Eliminar</a>
             </td>
         </tr>
     }

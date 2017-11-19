@@ -77,5 +77,10 @@ namespace SisCompras.BL
             finally { }
         }
 
+        public OrdenCompraModel ConsultarOrdenCompra(int ordenCompraId)
+        {
+            return (new OrdenCompraDAO()).ConsultarOrdenCompra(ordenCompraId);
+        }
+
     }
 }

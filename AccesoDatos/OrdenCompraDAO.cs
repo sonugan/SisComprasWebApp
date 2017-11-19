@@ -8,6 +8,7 @@ using System.Data;
 using System.Data.Odbc;
 using Modelos;
 using AplicacionLog;
+using Modelos.Dtos;
 
 namespace AccesoDatos
 {
@@ -108,6 +109,62 @@ namespace AccesoDatos
                 System.Diagnostics.Debug.WriteLine(resultado);
                 loger.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_ERROR, resultado, "ArticuloDAO.cs", "Insertar");
                 return resultado;
+            }
+            finally { }
+        }
+
+        public OrdenCompraModel ConsultarOrdenCompra(int ordenCompraId)
+        {
+            AplicacionLog.Logueo logger = new AplicacionLog.Logueo();
+            string mensaje = "";
+
+            try
+            {
+                logger.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_DEBUG, "Ingresando", "OrdenCompraDAO.cs", "ConsultarOrdenesCompra");
+
+                DataTable dt = new DataTable();
+                string sql = "SELECT orden_compra_cab_id, orden_compra_nro, proveedor_id, observaciones,";
+                sql += " numero_referencia, fecha_emision, condicion_compra_id, estado_cod, cantidad_pedida_total,";
+                sql += " cantidad_recibida_total, importe_total, moneda_operacion_id, moneda_nacional_id, cotizacion";
+                sql += " FROM ordenes_compra_cab";
+                sql += " WHERE orden_compra_cab_id = " + ordenCompraId.ToString();
+                logger.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_DEBUG, sql, "OrdenCompraDAO.cs", "ConsultarOrdenesCompra");
+
+                using (OdbcConnection odbcConn = new OdbcConnection(connectionString))
+                {
+                    odbcConn.Open();
+                    OdbcDataAdapter adapter = new OdbcDataAdapter(sql, odbcConn);
+                    adapter.Fill(dt);
+                }
+                if(dt.Rows.Count > 0)
+                {
+                    var dr = dt.Rows[0];
+                    return new OrdenCompraModel()
+                    {
+                        cabecera = new OCCabeceraModel()
+                        {
+                            ID = Convert.ToInt32(dr["orden_compra_cab_id"]),
+                            ProveedorId = Convert.ToInt32(dr["proveedor_id"]),
+                            FechaEmision = dr["fecha_emision"] != null ? Convert.ToDateTime(dr["fecha_emision"]) : new DateTime(),
+                            NroReferencia = dr["numero_referencia"] != null ? dr["numero_referencia"].ToString() : "",
+                            CantidadTotal = dr["cantidad_pedida_total"] != null ? Convert.ToDecimal(dr["cantidad_pedida_total"]) : 0,
+                            ImporteTotal = dr["importe_total"] != null ? Convert.ToDecimal(dr["importe_total"]) : 0,
+                            Numero = dr["orden_compra_nro"] != null ? dr["orden_compra_nro"].ToString() : "",
+                        }
+                    };
+                }
+                else
+                {
+                    return new OrdenCompraModel();
+                }
+                
+            }
+            catch (Exception miEx)
+            {
+                mensaje = miEx.Message.ToString();
+                System.Diagnostics.Debug.WriteLine(mensaje);
+                logger.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_ERROR, mensaje, "OrdenCompraDAO.cs", "ConsultarOrdenesCompra");
+                return null;
             }
             finally { }
         }

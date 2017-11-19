@@ -106,6 +106,24 @@ namespace SisComprasWebApp.Controllers
             finally { }
         }
 
+        public ActionResult Edit(int ordenCompraId)
+        {
+            try
+            {
+                var ordenCompra = ordenDeCompraBl.ConsultarOrdenCompra(ordenCompraId);
+                ordenCompra.cabecera.ProveedoresActivos = proveedorBl.ConsultarProveedoresActivos()
+                       .Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Nombre });
+
+                ordenCompra.cabecera.MonedasActivas = monedaBl.ConsultarMonedasActivasList(0)
+                    .Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.Codigo.ToString(), Selected = m.FlagDefault == "Si" });
+                return View("Create", ordenCompra);
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
         // POST: OrdenCompra/Create
         [HttpPost]
         public ActionResult Create(OrdenCompraModel ordenDeCompra)
@@ -134,12 +152,6 @@ namespace SisComprasWebApp.Controllers
             {
                 return View();
             }
-        }
-
-        // GET: OrdenCompra/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
         }
 
         // POST: OrdenCompra/Edit/5
