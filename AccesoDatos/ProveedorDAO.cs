@@ -146,6 +146,33 @@ namespace AccesoDatos
             finally { }
         }
 
+        public List<ProveedorModel> ConsultarProveedoresActivos()
+        {
+            List<ProveedorModel> proveedores = new List<ProveedorModel>();
+
+            var tablaProveedores = ConsultarProveedoresActivos(0);
+
+            foreach (DataRow dr in tablaProveedores.Rows)
+            {
+                ProveedorModel proveedor = new ProveedorModel()
+                {
+                    ID = Convert.ToInt32(dr["proveedor_id"]),
+                    Codigo = dr["proveedor_cod"].ToString(),
+                    Nombre = dr["proveedor_nombre"].ToString(),
+                    //Descripcion = dr["proveedor_dec"] != null ? dr["proveedor_desc"].ToString() : null,
+                    //Activo = dr["flag_activo"] != null ? dr["flag_activo"].ToString() : "No",
+                    //Version = dr["numero_version"] != null ? Convert.ToInt32(dr["numero_version"]) : 0,
+                    //FechaCreacion = Convert.ToDateTime(dr["fecha_creacion"]),
+                    //LoginCreacion = dr["login_creacion"] != null ? dr["login_creacion"].ToString() : null,
+                    //FechaUltModif = dr["fecha_ult_modif"] != null ? Convert.ToDateTime(dr["login_ult_modif"]) : new DateTime(),
+                    //LoginUltModif = dr["login_ult_modif"] != null ? dr["login_ult_modif"].ToString() : null,
+                };
+                proveedores.Add(proveedor);
+            }
+
+            return proveedores;
+        }
+
         public DataTable ConsultarProveedoresActivos(int iProveedorId)
         {
 

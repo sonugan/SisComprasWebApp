@@ -25,16 +25,24 @@ namespace SisComprasWebApp.Controllers
 
     public class OrdenCompraController : Controller
     {
+        private OrdenCompraBL ordenDeCompraBl;
+        private ProveedorBL proveedorBl;
+        private MonedaBL monedaBl;
+
+        public OrdenCompraController()
+        {
+            ordenDeCompraBl = new OrdenCompraBL();
+            proveedorBl = new ProveedorBL();
+            monedaBl = new MonedaBL();
+        }
+
         // GET: OrdenCompra
         [HttpGet]
         public ActionResult Index()
         {
-            OrdenCompraBL l_bl_OCompras = new OrdenCompraBL();
-            DataTable l_dt_OCompras = new DataTable();
+            var ordenesDeCompra = ordenDeCompraBl.ConsultarOrdenesCompra();
 
-            l_dt_OCompras = l_bl_OCompras.ConsultarOrdenesCompra();
-
-            return View(l_dt_OCompras);
+            return View(ordenesDeCompra);
         }
 
         // GET: OrdenCompra/Details/5
@@ -100,13 +108,27 @@ namespace SisComprasWebApp.Controllers
 
         // POST: OrdenCompra/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Create(OrdenCompraModel ordenDeCompra)
         {
             try
             {
-                // TODO: Add insert logic here
+                if (ModelState.IsValid)
+                {
+                    ordenDeCompra.cabecera.LoginCreacion = Session["UsuarioLogueado"].ToString();
+                    ordenDeCompra.cabecera.LoginUltModif = Session["UsuarioLogueado"].ToString();
+                    ordenDeCompraBl.InsertarCabecera(ordenDeCompra);
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ordenDeCompra.cabecera.ProveedoresActivos = proveedorBl.ConsultarProveedoresActivos()
+                        .Select( p => new SelectListItem { Value = p.ID.ToString(), Text = p.Nombre });
 
-                return RedirectToAction("Index");
+                    ordenDeCompra.cabecera.MonedasActivas = monedaBl.ConsultarMonedasActivasList(0)
+                        .Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.Codigo.ToString(), Selected = m.FlagDefault == "Si" });
+
+                    return View(ordenDeCompra);
+                }
             }
             catch
             {

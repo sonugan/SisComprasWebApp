@@ -106,6 +106,23 @@ namespace AccesoDatos
             finally { }
         }
 
+        public List<MonedaModel> ConsultarMonedasActivasList(int monedaId)
+        {
+            List<MonedaModel> monedas = new List<MonedaModel>();
+            foreach(DataRow dr in ConsultarMonedasActivas(monedaId).Rows)
+            {
+                monedas.Add(new MonedaModel()
+                {
+                    ID = Convert.ToInt32(dr["moneda_id"]),
+                    Codigo = dr["moneda_cod"].ToString(),
+                    Nombre = dr["moneda_nombre"].ToString(),
+                    FlagNacional = dr["flag_nacional"] != null ? dr["flag_nacional"].ToString() : null,
+                    FlagDefault = dr["flag_default"] != null ? dr["flag_default"].ToString() : null
+                });
+            }
+            return monedas;
+        }
+
         public string ObtenerMonedaNacional(out int iMonedaId, out string sMonedaCod)
         {
 

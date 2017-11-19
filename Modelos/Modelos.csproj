@@ -47,6 +47,7 @@
     <Compile Include="ArticuloModel.cs" />
     <Compile Include="DomicilioModel.cs" />
     <Compile Include="Dtos\DataTableAjaxPostModel.cs" />
+    <Compile Include="Dtos\OrdenCompraDto.cs" />
     <Compile Include="DynamicLengthAttribute.cs" />
     <Compile Include="Foto.cs" />
     <Compile Include="LocalidadModel.cs" />

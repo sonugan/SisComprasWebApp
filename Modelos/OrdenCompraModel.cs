@@ -15,6 +15,7 @@ namespace Modelos
         public OCCabeceraModel cabecera { get; set; }
         public List<OCLineaModel> lineas { get; set; }
 
+        public enum Estados { INICIADA, COMPLETA }
     }
 
     //Cabecera de la orden de compra

@@ -39,6 +39,31 @@ namespace SisCompras.BL
             finally { }
         }
 
+        public List<ProveedorModel> ConsultarProveedoresActivos()
+        {
+
+            AplicacionLog.Logueo logger = new AplicacionLog.Logueo();
+            string mensaje = "";
+
+            try
+            {
+                logger.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_DEBUG, "Ingresando", "ProveedorBL.cs", "ConsultarProveedoresActivos");
+
+                ProveedorDAO proveedorDao = new ProveedorDAO();
+                
+                return proveedorDao.ConsultarProveedoresActivos();
+
+            }
+            catch (Exception miEx)
+            {
+                mensaje = miEx.Message.ToString();
+                System.Diagnostics.Debug.WriteLine(mensaje);
+                logger.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_ERROR, mensaje, "ProveedorBL.cs", "ConsultarProveedoresActivos");
+                return null;
+            }
+            finally { }
+        }
+
         public ProveedorModel Consultar(int proveedorId)
         {
 

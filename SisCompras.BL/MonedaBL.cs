@@ -37,5 +37,10 @@ namespace SisCompras.BL
             finally { }
         }
 
+        public List<MonedaModel> ConsultarMonedasActivasList(int rubroId)
+        {
+            MonedaDAO monedaDao = new MonedaDAO();
+            return monedaDao.ConsultarMonedasActivasList(rubroId);
+        }
     }
 }

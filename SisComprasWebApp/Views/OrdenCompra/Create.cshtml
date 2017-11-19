@@ -4,13 +4,6 @@
     ViewBag.Title = "Orden de Compra";
 }
 
-<style type="text/css">
-    .swiper-container {
-    width: 600px;
-    height: 300px;
-}   
-</style>
-
 <script type="text/javascript" src="~/Scripts/Views/ordenDeCompra.js"></script>
 
 <h2>Crear</h2>
@@ -24,10 +17,33 @@
     <div class="form-horizontal">
         <div class="form-group">
             <div class="col-md-2">
+                @Html.LabelFor(model => model.cabecera.Numero, htmlAttributes: new { @class = "control-label col-md-2" })
+            </div>
+            <div class="col-md-4">
+                @if (Model.cabecera.ID == 0)
+                {
+                    @Html.TextBoxFor(model => model.cabecera.Numero, new { @class = "form-control" })
+                }
+                else
+                {
+                    @Html.TextBoxFor(model => model.cabecera.Numero, new { @class = "form-control", @disabled = true })
+                }
+                @Html.ValidationMessageFor(model => model.cabecera.Numero, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2">
                 @Html.LabelFor(model => model.cabecera.ProveedorId, htmlAttributes: new { @class = "control-label col-md-2" })
             </div>
             <div class="col-md-4 DB-select-proveedor">
-                @Html.DropDownListFor(model => model.cabecera.ProveedorId, Model.cabecera.ProveedoresActivos, "Seleccione un proveedor")
+                @if (Model.cabecera.ID == 0)
+                {
+                    @Html.DropDownListFor(model => model.cabecera.ProveedorId, Model.cabecera.ProveedoresActivos, "Seleccione un proveedor")
+                }
+                else
+                {
+                    @Html.DropDownListFor(model => model.cabecera.ProveedorId, Model.cabecera.ProveedoresActivos, "Seleccione un proveedor", new { @disabled = true })
+                }
                 @Html.ValidationMessageFor(model => model.cabecera.ProveedorId, "", new { @class = "text-danger" })
             </div>
             <div class="col-md-2">
@@ -59,8 +75,8 @@
             <div class="col-md-1">
                 @Html.LabelFor(model => model.cabecera.CantidadTotal, htmlAttributes: new { @class = "control-label col-md-2" })
             </div>
-            <div class="col-md-1 alert-success">
-                @Html.DisplayFor(model => model.cabecera.CantidadTotal, new { htmlAttributes = new { @class = "form-control" } })
+            <div class="col-md-1">
+                @Html.TextBoxFor(model => model.cabecera.CantidadTotal, new { @class = "form-control", @disabled=true })
                 @Html.ValidationMessageFor(model => model.cabecera.CantidadTotal, "", new { @class = "text-danger" })
             </div>
             <div class="col-md-2">
@@ -77,12 +93,12 @@
                 @Html.EditorFor(model => model.cabecera.Cotizacion, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.cabecera.Cotizacion, "", new { @class = "text-danger" })
             </div>
-            <div class="col-md-2 alert-success">
-                @Html.DisplayFor(model => model.cabecera.ImporteTotal, new { htmlAttributes = new { @class = "form-control" } })
+            <div class="col-md-1">
+                @Html.TextBoxFor(model => model.cabecera.ImporteTotal, new { @class = "form-control", @disabled = true })
                 @Html.ValidationMessageFor(model => model.cabecera.ImporteTotal, "", new { @class = "text-danger" })
             </div>
         </div>
-        <div class="form-group">
+        @*<div class="form-group">
             <div class="col-md-2">
                 <label class="control-label col-md-8">Artículos cargados a partir del:</label>
             </div>
@@ -92,73 +108,17 @@
             <div class="col-md-2">
                 <input type="button" class="form-control btn-success" id="btnCargarArticulos" value="Cargar" />
             </div>
+        </div>*@
+        <div class="form-group">
+            <div class="col-md-12" style="text-align:center">
+                <input type="submit" value="Crear" class="btn btn-success" />
+            </div>
+            </div>
         </div>
-    </div>
-    <div class="fotorama" id="articulosActuales" data-width="50%"
-         data-ratio="800/600" data-nav="thumbs" data-auto="false">   
-    </div>
-        @Html.Partial("OCLineasCarga", Model)
-        @Html.Partial("OCLineasOtros", Model)
-
-     <div class="form-group">
-         <div class="col-md-offset-0 col-md-10">
-            <input type="submit" value="Crear" class="btn btn-default" />
-         </div>
-     </div>
+    @*@Html.Partial("OCLineasCarga", Model)
+    @Html.Partial("OCLineasOtros", Model)*@
 }
-
-
 
 <div class="col-md-offset-0 col-md-10">
     @Html.ActionLink("Volver", "Index")
 </div>
-
-
-<script>
-        //$("#btnCargarArticulos").click(function ()
-        //{
-
-        //    //ProveedorId y FechaCarga debe corresponder con la estructura del parámetro que recibe
-        //    //el método ConsultarArticulosCargados del controller OrdenCompra (ver el Action)
-        //    var dataObject = { sProveedorId: $('#cabecera_ProveedorId').val(), sFechaCarga: $('#FechaCarga').val() };
-        //    $.ajax({
-        //        url: '@Url.Action("ConsultarArticulosCargados", "OrdenCompra")',
-        //        type: "GET",
-        //        data: dataObject,
-        //        datatype: "json",
-        //        success: function (result)
-        //        {
-        //            //if (result.toString() == "") //Fracaso
-        //            //{
-        //            //    alert("Fracaso 1");
-        //            //}
-        //            //else //Éxito
-        //            //{
-        //            //    alert("Exito: " + result);
-        //            //}
-        //            //$("#articulosActuales").empty();
-        //            //$(".fotorama--hidden").remove();
-        //            var data = []
-        //            for (var i = 0; i < result.length; i++) {
-        //                $("#articulosActuales").append('<img src="data:image/png;base64,' + result[i].Foto.ToBase64 + '">')
-                    
-        //            }
-        //            $('.fotorama').fotorama({
-        //                data: [
-        //                  { img: '1.jpg', thumb: '1-thumb.jpg' },
-        //                  { img: '2.jpg', thumb: '2-thumb.jpg' }
-        //                ]
-        //            });
-
-        //            // Load the new set of Photos here
-        //            // after that the below statement will re-initialize the fotorama gallery plugin
-        //            //$('.fotorama').fotorama();
-        //        },
-        //        error: function (result)
-        //        {
-        //            alert("Error en btnCargarArticulos.click");
-        //        }
-        //    })
-        //})
-
-</script>

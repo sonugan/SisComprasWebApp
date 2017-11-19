@@ -1,4 +1,4 @@
-﻿@model System.Data.DataTable
+﻿@model List<Modelos.Dtos.OrdenCompraDto>
 
 @{
     ViewBag.Title = "Órdenes de Compra";
@@ -16,20 +16,20 @@
         <th>Importe</th>
 
     </tr>
-    @for (int i = 0; i < Model.Rows.Count; i++)
+    @foreach(var ordenDeCompra in Model)
     {
         <tr>
             @*No muestro ORDEN_COMPRA_CAB_ID*@
-            <td>@Model.Rows[i]["fecha_emision"]</td>
-            <td>@Model.Rows[i]["proveedor_nombre"]</td>
-            <td>@Model.Rows[i]["orden_compra_nro"]</td>
-            <td>@Model.Rows[i]["numero_referencia"]</td>
-            <td>@Model.Rows[i]["cantidad_pedida_total"]</td>
-            <td>@Model.Rows[i]["moneda_cod"]</td>
-            <td>@Model.Rows[i]["importe_total"]</td>
+            <td>@ordenDeCompra.FechaEmision.ToString("dd/MM/yyyy")</td>
+            <td>@ordenDeCompra.NombreProveedor</td>
+            <td>@ordenDeCompra.Numero</td>
+            <td>@ordenDeCompra.NumeroReferencia</td>
+            <td>@ordenDeCompra.CantidadPedida</td>
+            <td>@ordenDeCompra.CodigoMonedaOpearcion</td>
+            <td>@ordenDeCompra.ImporteTotal</td>
             <td>
-                <a href="@Url.Action("Edit", "OrdenCompra", new { @id=Model.Rows[i]["orden_compra_cab_id"] })">Editar</a>
-                <a href="@Url.Action("Delete", "OrdenCompra", new { @id=Model.Rows[i]["orden_compra_cab_id"] })">Eliminar</a>
+                <a href="@Url.Action("Edit", "OrdenCompra", new { @id=ordenDeCompra.Id })">Editar</a>
+                <a href="@Url.Action("Delete", "OrdenCompra", new { @id=ordenDeCompra.Id })">Eliminar</a>
             </td>
         </tr>
     }
