@@ -27,7 +27,7 @@ AS
 BEGIN EXIT; END ^
 
 
-ALTER PROCEDURE "TEST" 
+ALTER PROCEDURE "SP_ORDENES_COMPRA_CAB_INSERT" 
 (
   "NUMERO" VARCHAR(30),
   "PROVEEDOR_ID" INTEGER,
@@ -53,7 +53,7 @@ BEGIN
     /* Tomo el próximo valor del generador.     */
     /********************************************/
     po_i_orden_compra_id = GEN_ID ( SP_ORDENES_COMPRA_CAB_G , 1 );
-	
+
     /********************************************/
     /* Inserto el nuevo registro en la tabla.   */
     /********************************************/
