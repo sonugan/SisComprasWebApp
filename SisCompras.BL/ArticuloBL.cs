@@ -190,7 +190,7 @@ namespace SisCompras.BL
             finally { }
         }
 
-        public List<ArticuloModel> ConsultarArticulosCarga(string sProveedorId, string sFechaCargaDesde, string sFechaCargaHasta = "")
+        public ListaPaginada<ArticuloModel> ConsultarArticulosCarga(Paginado paginado, string sProveedorId, string sFechaCargaDesde, string sFechaCargaHasta = "")
         {
 
             AplicacionLog.Logueo l_log_Objeto = new AplicacionLog.Logueo();
@@ -202,7 +202,7 @@ namespace SisCompras.BL
                 
                 l_log_Objeto.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_DEBUG, "Ingresando", "ArticuloBL.cs", "ConsultarArticulosCarga");
                 
-                return l_dao_Articulo.ConsultarArticulosCarga(sProveedorId, sFechaCargaDesde, sFechaCargaHasta); 
+                return l_dao_Articulo.ConsultarArticulosCarga(paginado, sProveedorId, sFechaCargaDesde, sFechaCargaHasta); 
 
             }
             catch (Exception miEx)

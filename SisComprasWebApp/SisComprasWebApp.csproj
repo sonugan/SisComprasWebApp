@@ -336,6 +336,7 @@
     <Content Include="Views\Rubro\Edit.cshtml" />
     <Content Include="Views\Rubro\Index.cshtml" />
     <Content Include="Views\Usuario\Login.cshtml" />
+    <Content Include="Views\OrdenCompra\AddArticulo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

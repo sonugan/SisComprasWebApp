@@ -1,0 +1,60 @@
+﻿@model Modelos.Dtos.ArticuloOrdenCompraDto
+
+@{
+    ViewBag.Title = "Agegar artículo";
+}
+
+<h2>Nuevo artículo</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <h4>Orden de compra</h4>
+    @Html.HiddenFor(model => model.ID)
+    @Html.HiddenFor(model => model.CabeceraId)
+    @Html.HiddenFor(model => model.ArticuloId)
+    @Html.HiddenFor(model => model.ProveedorId)
+    @Html.HiddenFor(model => model.Precio)
+    @Html.HiddenFor(model => model.CodigoArticulo)
+    <hr />
+    <div class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.CodigoArticulo, htmlAttributes: new { @class = "control-label col-md-2" })
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(model => model.CodigoArticulo, new { @class = "form-control", @disabled = true })
+                @Html.ValidationMessageFor(model => model.CodigoArticulo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.Cantidad, htmlAttributes: new { @class = "control-label col-md-2" })
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(model => model.Cantidad, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Cantidad, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2">
+                @Html.LabelFor(model => model.Precio, htmlAttributes: new { @class = "control-label col-md-2" })
+            </div>
+            <div class="col-md-4">
+                @Html.TextBoxFor(model => model.Precio, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Precio, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-12" style="text-align:center">
+                <input type="submit" value="Agregar" class="btn btn-success" />
+            </div>
+        </div>
+        </div>
+    <hr />
+}
+
+<div class="col-md-offset-0 col-md-10">
+    @Html.ActionLink("Volver", "Index")
+</div>

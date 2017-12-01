@@ -217,9 +217,9 @@ namespace SisComprasWebApp.Controllers
                 }
 
                 ArticuloBL l_bl_Articulo = new ArticuloBL();
-                List<ArticuloModel> articulos = l_bl_Articulo.ConsultarArticulosCarga(sProveedorId, sFechaCarga);
+                ListaPaginada<ArticuloModel> articulos = l_bl_Articulo.ConsultarArticulosCarga(new Paginado(), sProveedorId, sFechaCarga);
 
-                return View(articulos);
+                return View(articulos.Lista);
             }
             catch (Exception miEx)
             {
@@ -234,7 +234,7 @@ namespace SisComprasWebApp.Controllers
         }
 
         [HttpGet]
-        public ActionResult ConsultarArticulosCargados(string sProveedorId, string sFechaCargaDesde, string sFechaCargaHasta)
+        public ActionResult ConsultarArticulosCargados(int? start, int? length, string sProveedorId, string sFechaCargaDesde, string sFechaCargaHasta)
         {
             AplicacionLog.Logueo l_log_Objeto = new AplicacionLog.Logueo();
             string l_s_Mensaje = "";
@@ -272,22 +272,25 @@ namespace SisComprasWebApp.Controllers
                 l_log_Objeto.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_DEBUG, "Ingresando", "OrdenCompraController.cs", "ConsultarArticulosCargados [HttpGet]");
 
                 ArticuloBL l_bl_Articulo = new ArticuloBL();
-
-                var articulos = l_bl_Articulo.ConsultarArticulosCarga(sProveedorId, sFechaCargaDesde, sFechaCargaHasta)
-                    .Select(a => new
-                    {
-                        Codigo = a.Codigo,
-                        Nombre = a.Nombre,
-                        Descripcion = a.Descripcion,
-                        Foto = "\\<img src='data:image/jpg;base64," + a.Foto.ToBase64 + "' style='height:150px; width:150px'\\>"
-                    });
+                Paginado paginado = new Paginado() { PaginaInicial = start, TamanioHoja = length };
+                var articulos = l_bl_Articulo.ConsultarArticulosCarga(paginado, sProveedorId, sFechaCargaDesde, sFechaCargaHasta);
 
                 //return Json(articulos, JsonRequestBehavior.AllowGet);
 
                 return Json(
                     new
                     {
-                        data = articulos
+                        initialPage = articulos.Paginado.PaginaInicial,
+                        pageSize = articulos.Paginado.TamanioHoja,
+                        totalRecords = articulos.Paginado.CantidadDeRegistros,
+                        registrosFiltrados = articulos.Paginado.RegistrosFiltrados,
+                        data = articulos.Lista.Select(a => new
+                        {
+                            Codigo = a.Codigo,
+                            Nombre = a.Nombre,
+                            Descripcion = a.Descripcion,
+                            Foto = @"\<img src='data:image/jpg;base64," + a.Foto.ToBase64 + "' style='height:150px; width:150px'\\>",
+                        })
                     }, JsonRequestBehavior.AllowGet);
 
             }
@@ -303,6 +306,35 @@ namespace SisComprasWebApp.Controllers
             finally { }
         }
 
+
+        [HttpGet]
+        public ActionResult AddArticulo(int articuloId, int ordenDeCompraId)
+        {
+            var articulo = ordenDeCompraBl.ConsultarArticulo(articuloId, ordenDeCompraId);
+            articulo.LoginUltModif = Session["UsuarioLogueado"].ToString();
+            return View(articulo);
+        }
+
+        [HttpPost]
+        public ActionResult AddArticulo(ArticuloOrdenCompraDto articulo)
+        {
+            if (ModelState.IsValid)
+            {
+                ordenDeCompraBl.AgregarArticulo(articulo);
+
+                var ordenDeCompra = ordenDeCompraBl.ConsultarOrdenCompra(articulo.CabeceraId);
+                ordenDeCompra.cabecera.ProveedoresActivos = proveedorBl.ConsultarProveedoresActivos()
+                      .Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Nombre });
+
+                ordenDeCompra.cabecera.MonedasActivas = monedaBl.ConsultarMonedasActivasList(0)
+                    .Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.Codigo.ToString(), Selected = m.FlagDefault == "Si" });
+                return View("Create", ordenDeCompra);
+            }
+            else
+            {
+                return View(articulo);
+            }
+        }
 
         //public JsonResult CustomServerSideSearchAction(DataTableAjaxPostModel model)
         //{

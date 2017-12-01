@@ -12,9 +12,16 @@ namespace SisCompras.BL
 {
     public class OrdenCompraBL
     {
+        private OrdenCompraDAO ordenCompraDao;
+
+        public OrdenCompraBL()
+        {
+            ordenCompraDao = new OrdenCompraDAO();
+        }
+
         public List<OrdenCompraDto> ConsultarOrdenesCompra()
         {
-
+            
             AplicacionLog.Logueo logger = new AplicacionLog.Logueo();
             string mensaje = "";
 
@@ -79,7 +86,17 @@ namespace SisCompras.BL
 
         public OrdenCompraModel ConsultarOrdenCompra(int ordenCompraId)
         {
-            return (new OrdenCompraDAO()).ConsultarOrdenCompra(ordenCompraId);
+            return ordenCompraDao.ConsultarOrdenCompra(ordenCompraId);
+        }
+
+        public ArticuloOrdenCompraDto ConsultarArticulo(int ordenCompraId, int articuloId)
+        {
+            return ordenCompraDao.ConsultarArticulo(ordenCompraId, articuloId);
+        }
+
+        public string AgregarArticulo(ArticuloOrdenCompraDto articuloOrdenCompra)
+        {
+            return ordenCompraDao.AgregarArticulo(articuloOrdenCompra);
         }
 
     }

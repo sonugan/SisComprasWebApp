@@ -7,6 +7,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.Odbc;
 using Modelos;
+using Modelos.Dtos;
 
 namespace AccesoDatos
 {
@@ -403,7 +404,7 @@ namespace AccesoDatos
             finally { }
         }
 
-        public List<ArticuloModel> ConsultarArticulosCarga(string sProveedorId, string sFechaCargaDesde, string sFechaCargaHasta = "")
+        public ListaPaginada<ArticuloModel> ConsultarArticulosCarga(Paginado paginado, string sProveedorId, string sFechaCargaDesde, string sFechaCargaHasta = "")
         {
             AplicacionLog.Logueo logger = new AplicacionLog.Logueo();
             string mensaje = "";
@@ -454,7 +455,8 @@ namespace AccesoDatos
                     });
                 }
 
-                return articulos;
+                Paginador<ArticuloModel> paginador = new Paginador<ArticuloModel>();
+                return paginador.Paginar(articulos, paginado);
 
             }
             catch (Exception miEx)

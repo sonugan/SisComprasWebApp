@@ -20,6 +20,10 @@ var ordenDeCompra = (function () {
                 { "data": "Codigo" },
                { "data": "Nombre" },
                { "data": "Descripcion" },
+                {
+                    "data": null,
+                    "defaultContent": "<button>Click!</button>"
+                }
             ],
             "language": {
                 "decimal": "",
@@ -45,6 +49,11 @@ var ordenDeCompra = (function () {
                     "sortDescending": ": activate to sort column descending"
                 }
             }
+        });
+        $('#productosActuales tbody').on('click', 'button', function (e) {
+            e.preventDefault()
+            var data = tablaDeProductosActuales.row($(this).parents('tr')).data();
+            location.href = "AddArticulo?articuloId=2&ordenDeCompraId=12"
         });
     }
 
