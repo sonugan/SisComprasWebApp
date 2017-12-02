@@ -116,11 +116,12 @@ namespace SisComprasWebApp.Controllers
 
                 ordenCompra.cabecera.MonedasActivas = monedaBl.ConsultarMonedasActivasList(0)
                     .Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.Codigo.ToString(), Selected = m.FlagDefault == "Si" });
+
                 return View("Create", ordenCompra);
             }
             catch
             {
-                return View();
+                return View("Index");
             }
         }
 
@@ -234,6 +235,68 @@ namespace SisComprasWebApp.Controllers
         }
 
         [HttpGet]
+        public ActionResult ArticulosCargados(int cabeceraId)
+        {
+            AplicacionLog.Logueo l_log_Objeto = new AplicacionLog.Logueo();
+            string l_s_Mensaje = "";
+
+            try
+            {
+                return View(new OrdenCompraModel() { cabecera = new OCCabeceraModel() { ID = cabeceraId } });
+            }
+            catch (Exception miEx)
+            {
+                l_s_Mensaje = miEx.Message.ToString();
+                System.Diagnostics.Debug.WriteLine(l_s_Mensaje);
+                l_log_Objeto.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_ERROR, l_s_Mensaje, "OrdenCompraController.cs", "OCLineasCarga [HttpGet]");
+                ViewBag.ErrorMessage = l_s_Mensaje;
+                ViewBag.ErrorObject = "OCLineas";
+                return View("Error");
+            }
+            finally { }
+        }
+
+        [HttpGet]
+        public ActionResult ConsultarArticulosCargadosEnOrden(int cabeceraId)
+        {
+            AplicacionLog.Logueo l_log_Objeto = new AplicacionLog.Logueo();
+            string l_s_Mensaje = "";
+
+            try
+            {
+
+                l_log_Objeto.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_DEBUG, "Ingresando", "OrdenCompraController.cs", "OCLineasCarga [HttpGet]");
+                
+                ListaPaginada<ArticuloOrdenCompraDto> articulos = ordenDeCompraBl.ConsultarArticulosOrdenCompra(new Paginado(), cabeceraId);
+                return Json(
+                   new
+                   {
+                       initialPage = articulos.Paginado.PaginaInicial,
+                       pageSize = articulos.Paginado.TamanioHoja,
+                       recordsTotal = articulos.Paginado.CantidadDeRegistros,
+                       recordsFiltered = articulos.Paginado.RegistrosFiltrados,
+                       data = articulos.Lista.Select(a => new
+                       {
+                           Codigo = a.CodigoArticulo,
+                           Nombre = a.NombreArticulo,
+                           Descripcion = a.DescripcionArticulo,
+                           Foto = @"\<img src='data:image/jpg;base64," + a.FotoArticulo.ToBase64 + "' style='height:150px; width:150px'\\>",
+                       })
+                   }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception miEx)
+            {
+                l_s_Mensaje = miEx.Message.ToString();
+                System.Diagnostics.Debug.WriteLine(l_s_Mensaje);
+                l_log_Objeto.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_ERROR, l_s_Mensaje, "OrdenCompraController.cs", "OCLineasCarga [HttpGet]");
+                ViewBag.ErrorMessage = l_s_Mensaje;
+                ViewBag.ErrorObject = "OCLineas";
+                return View("Error");
+            }
+            finally { }
+        }
+
+        [HttpGet]
         public ActionResult ConsultarArticulosCargados(int? start, int? length, string sProveedorId, string sFechaCargaDesde, string sFechaCargaHasta)
         {
             AplicacionLog.Logueo l_log_Objeto = new AplicacionLog.Logueo();
@@ -282,8 +345,8 @@ namespace SisComprasWebApp.Controllers
                     {
                         initialPage = articulos.Paginado.PaginaInicial,
                         pageSize = articulos.Paginado.TamanioHoja,
-                        totalRecords = articulos.Paginado.CantidadDeRegistros,
-                        registrosFiltrados = articulos.Paginado.RegistrosFiltrados,
+                        recordsTotal = articulos.Paginado.CantidadDeRegistros,
+                        recordsFiltered = articulos.Paginado.RegistrosFiltrados,
                         data = articulos.Lista.Select(a => new
                         {
                             Codigo = a.Codigo,

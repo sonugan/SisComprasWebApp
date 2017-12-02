@@ -99,5 +99,10 @@ namespace SisCompras.BL
             return ordenCompraDao.AgregarArticulo(articuloOrdenCompra);
         }
 
+        public ListaPaginada<ArticuloOrdenCompraDto> ConsultarArticulosOrdenCompra(Paginado paginado, int cabeceraId)
+        {
+            return ordenCompraDao.ConsultarArticulosOrdenCompra(paginado, cabeceraId);
+        }
+
     }
 }

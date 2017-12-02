@@ -4,9 +4,19 @@
     ViewBag.Title = "Orden de Compra";
 }
 
-<script type="text/javascript" src="~/Scripts/Views/ordenDeCompra.js"></script>
-
-<h2>Crear</h2>
+<div class="row">
+    <div class="col-md-4">
+        <h2>Crear</h2>
+    </div>
+    <div class="col-md-8" style="text-align:right">
+        @if (Model.cabecera.ID > 0)
+        {
+            <a href="~/OrdenCompra/ArticulosCargados?cabeceraId=@Model.cabecera.ID" title="Ítems agregados"><img src="~/Content/Imagenes/cart.png" style="width:80px;height:80px" /></a>
+            <a href="#" title="Finalizar y enviar" id="enviar"><img src="~/Content/Imagenes/send.png" style="width:80px;height:80px" /></a>  
+            <a href="#" title="Descartar" id="eliminar"><img src="~/Content/Imagenes/delete.png" style="width:80px;height:80px" /></a>
+        }
+    </div>
+</div>
 
 @using (Html.BeginForm())
 {
@@ -133,3 +143,9 @@
 <div class="col-md-offset-0 col-md-10">
     @Html.ActionLink("Volver", "Index")
 </div>
+
+
+<div id="dialogEnviar" title="Alerta!">¿Desea finalizar la orden de compra?</div>
+<div id="dialogEliminar" title="Alerta!">¿Desea eliminar la orden de compra?</div>
+
+<script type="text/javascript" src="~/Scripts/Views/ordenDeCompra.js"></script>

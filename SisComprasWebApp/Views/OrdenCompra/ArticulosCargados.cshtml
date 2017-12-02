@@ -1,0 +1,19 @@
+﻿@model Modelos.OrdenCompraModel
+
+<h2>Lista de Artículos Seleccionados</h2>
+
+<hr />
+@Html.HiddenFor(model => model.cabecera.ID, new { id = "cabeceraId" })
+<table id="productosActuales" class="display" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Foto</th>
+            <th>Codigo</th>
+            <th>Nombre</th>
+            <th>Descripcion</th>
+            <th></th>
+        </tr>
+    </thead>
+</table>
+
+<script src="~/Scripts/Views/articulosCargados.js"></script>

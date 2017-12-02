@@ -16,6 +16,8 @@ namespace Modelos.Dtos
         
         public int ArticuloId { get; set; }
         public string CodigoArticulo { get; set; }
+        public string NombreArticulo { get; set; }
+        public string DescripcionArticulo { get; set; }
         public int ProveedorId { get; set; }
 
         public Foto FotoArticulo { get; set; }

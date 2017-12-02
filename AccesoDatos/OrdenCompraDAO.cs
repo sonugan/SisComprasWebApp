@@ -169,6 +169,63 @@ namespace AccesoDatos
             finally { }
         }
 
+        public ListaPaginada<ArticuloOrdenCompraDto> ConsultarArticulosOrdenCompra(Paginado paginado, int cabeceraId)
+        {
+            AplicacionLog.Logueo logger = new AplicacionLog.Logueo();
+            string mensaje = "";
+            try
+            {
+                logger.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_DEBUG, "Ingresando", "OrdenCompraDAO.cs", "ConsultarOrdenesCompra");
+
+                string selectArticuloOrdenCompra = string.Format(@"
+                                SELECT o.orden_compra_linea_id, o.articulo_x_proveedor_id, o.cantidad_pedida, o.precio_unitario,
+                                o.fecha_recepcion, o.cantidad_recibida, o.porc_descuento, o.orden_compra_cab_id, o.unidad_medida_cod,
+                                a.articulo_cod, a.moneda_id, a.precio_en_moneda, a.proveedor_id, articulo_nombre
+                                FROM ordenes_compra_lineas o INNER JOIN articulos_x_proveedores a ON (a.articulo_x_proveedor_id = o.articulo_x_proveedor_id)
+                                WHERE orden_compra_cab_id = {0}", cabeceraId);
+
+                //logger.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_DEBUG, sql, "OrdenCompraDAO.cs", "ConsultarArticulo");
+
+                DataTable articulosOrdenCompraDt = new DataTable();
+                using (OdbcConnection odbcConn = new OdbcConnection(connectionString))
+                {
+                    odbcConn.Open();
+                    OdbcDataAdapter adapter = new OdbcDataAdapter(selectArticuloOrdenCompra, odbcConn);
+                    adapter.Fill(articulosOrdenCompraDt);
+                }
+
+                List<ArticuloOrdenCompraDto> articulos = new List<ArticuloOrdenCompraDto>();
+
+                if (articulosOrdenCompraDt.Rows.Count > 0)
+                {
+                    var dr = articulosOrdenCompraDt.Rows[0];
+                    var articulo = new ArticuloOrdenCompraDto()
+                    {
+                        CabeceraId = cabeceraId,
+                        ID = Convert.ToInt32(dr["orden_compra_linea_id"]),
+                        Cantidad = Convert.ToInt32(dr["cantidad_pedida"]),
+                        ArticuloId = Convert.ToInt32(dr["articulo_x_proveedor_id"]),
+                        CodigoArticulo = dr["articulo_cod"].ToString(),
+                        ProveedorId = Convert.ToInt32(dr["proveedor_id"]),
+                        NombreArticulo = dr["articulo_nombre"].ToString()
+                    };
+                    articulos.Add(articulo);
+                }
+
+                Paginador<ArticuloOrdenCompraDto> paginador = new Paginador<ArticuloOrdenCompraDto>();
+                return paginador.Paginar(articulos, paginado);
+
+            }
+            catch (Exception miEx)
+            {
+                mensaje = miEx.Message.ToString();
+                System.Diagnostics.Debug.WriteLine(mensaje);
+                logger.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_ERROR, mensaje, "OrdenCompraDAO.cs", "ConsultarOrdenesCompra");
+                return null;
+            }
+            finally { }
+        }
+
         public ArticuloOrdenCompraDto ConsultarArticulo(int articuloId, int ordenCompraId)
         {
             AplicacionLog.Logueo logger = new AplicacionLog.Logueo();

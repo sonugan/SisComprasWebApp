@@ -263,7 +263,9 @@
     <Content Include="Scripts\DataTables\datatables.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -337,6 +339,7 @@
     <Content Include="Views\Rubro\Index.cshtml" />
     <Content Include="Views\Usuario\Login.cshtml" />
     <Content Include="Views\OrdenCompra\AddArticulo.cshtml" />
+    <Content Include="Views\OrdenCompra\ArticulosCargados.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -348,7 +351,6 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
-    <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AplicacionLog\AplicacionLog.csproj">

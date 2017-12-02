@@ -9,7 +9,6 @@ namespace SisComprasWebApp
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-                        "~/Scripts/jquery-{version}.js",
                         "~/Scripts/DataTables/datatables.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
