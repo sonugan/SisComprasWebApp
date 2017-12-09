@@ -180,7 +180,7 @@ namespace AccesoDatos
                 string selectArticuloOrdenCompra = string.Format(@"
                                 SELECT o.orden_compra_linea_id, o.articulo_x_proveedor_id, o.cantidad_pedida, o.precio_unitario,
                                 o.fecha_recepcion, o.cantidad_recibida, o.porc_descuento, o.orden_compra_cab_id, o.unidad_medida_cod,
-                                a.articulo_cod, a.moneda_id, a.precio_en_moneda, a.proveedor_id, articulo_nombre
+                                a.articulo_cod, a.moneda_id, a.precio_en_moneda, a.proveedor_id, articulo_nombre, a.url_imagen
                                 FROM ordenes_compra_lineas o INNER JOIN articulos_x_proveedores a ON (a.articulo_x_proveedor_id = o.articulo_x_proveedor_id)
                                 WHERE orden_compra_cab_id = {0}", cabeceraId);
 
@@ -207,7 +207,8 @@ namespace AccesoDatos
                         ArticuloId = Convert.ToInt32(dr["articulo_x_proveedor_id"]),
                         CodigoArticulo = dr["articulo_cod"].ToString(),
                         ProveedorId = Convert.ToInt32(dr["proveedor_id"]),
-                        NombreArticulo = dr["articulo_nombre"].ToString()
+                        NombreArticulo = dr["articulo_nombre"].ToString(),
+                        FotoArticulo = FotoGenerator(dr["url_imagen"].ToString())
                     };
                     articulos.Add(articulo);
                 }
@@ -224,6 +225,25 @@ namespace AccesoDatos
                 return null;
             }
             finally { }
+        }
+
+        private Foto FotoGenerator(string path)
+        {
+            var fullPath = path;
+            if (!System.IO.Path.IsPathRooted(path))
+            {
+                fullPath = GetFullPath(path);
+            }
+            if (!string.IsNullOrEmpty(fullPath) && System.IO.File.Exists(fullPath))
+            {
+                return new Foto(fullPath);
+            }
+            return new Foto(string.Format("{0}\\{1}", AppDomain.CurrentDomain.BaseDirectory, "Content\\Imagenes\\noImage.png"));
+        }
+
+        private string GetFullPath(string path)
+        {
+            return string.Format("{0}\\{1}", AppDomain.CurrentDomain.BaseDirectory, path);
         }
 
         public ArticuloOrdenCompraDto ConsultarArticulo(int articuloId, int ordenCompraId)

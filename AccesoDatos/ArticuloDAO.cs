@@ -417,7 +417,7 @@ namespace AccesoDatos
                 
                 DataTable dt = new DataTable();
                 string sql = "SELECT articulo_x_proveedor_id, articulo_cod, articulo_nombre,";
-                sql += " moneda_id, moneda_cod, precio_en_moneda";
+                sql += " moneda_id, moneda_cod, precio_en_moneda, url_imagen";
                 sql += " FROM vw_articulos";
                 sql += " WHERE proveedor_id = " + sProveedorId;
 
@@ -440,7 +440,7 @@ namespace AccesoDatos
                     OdbcDataAdapter adapter = new OdbcDataAdapter(sql, odbcConn);
                     adapter.Fill(dt);
                 }
-
+                
                 List<ArticuloModel> articulos = new List<ArticuloModel>();
                 foreach(DataRow row in dt.Rows)
                 {
@@ -451,7 +451,7 @@ namespace AccesoDatos
                         Nombre = row["articulo_nombre"] != null ? row["articulo_nombre"].ToString() : null,
                         MonedaId = row["moneda_id"] != null ? Convert.ToInt32(row["moneda_id"]) : 0,
                         PrecioEnMoneda = row["precio_en_moneda"] != null ? Convert.ToDecimal(row["precio_en_moneda"]) : 0,
-                        Foto = new Foto(@"C:\gaston\proyectos\SisComprasWebApp\SisComprasWebApp\Fotos\producto1.jpg")                        
+                        Foto = FotoGenerator(row["url_imagen"].ToString())
                     });
                 }
 
@@ -468,7 +468,7 @@ namespace AccesoDatos
             }
             finally { }
         }
-
+        
         public DataTable ConsultarArticulos()
         {
             AplicacionLog.Logueo l_log_Objeto = new AplicacionLog.Logueo();
@@ -976,6 +976,24 @@ namespace AccesoDatos
             }
             finally { }
         }
-        
+
+        private Foto FotoGenerator(string path)
+        {
+            var fullPath = path;
+            if (!System.IO.Path.IsPathRooted(path))
+            {
+                fullPath = GetFullPath(path);
+            }
+            if (!string.IsNullOrEmpty(fullPath) && System.IO.File.Exists(fullPath))
+            {
+                return new Foto(fullPath);
+            }
+            return new Foto(string.Format("{0}\\{1}", AppDomain.CurrentDomain.BaseDirectory, "Content\\Imagenes\\noImage.png"));
+        }
+
+        private string GetFullPath(string path)
+        {
+            return string.Format("{0}\\{1}", AppDomain.CurrentDomain.BaseDirectory, path);
+        }
     }
 }

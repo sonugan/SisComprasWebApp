@@ -91,7 +91,7 @@ namespace SisComprasWebApp.Controllers
                 cabecera.MonedasActivas = l_sli_Monedas;
 
                 model.cabecera = cabecera;
-
+                ViewBag.RecargarGrilla = false;
                 return View(model);
             }
             catch (Exception miEx)
@@ -116,7 +116,7 @@ namespace SisComprasWebApp.Controllers
 
                 ordenCompra.cabecera.MonedasActivas = monedaBl.ConsultarMonedasActivasList(0)
                     .Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.Codigo.ToString(), Selected = m.FlagDefault == "Si" });
-
+                ViewBag.RecargarGrilla = false;
                 return View("Create", ordenCompra);
             }
             catch
@@ -280,7 +280,7 @@ namespace SisComprasWebApp.Controllers
                            Codigo = a.CodigoArticulo,
                            Nombre = a.NombreArticulo,
                            Descripcion = a.DescripcionArticulo,
-                           Foto = @"\<img src='data:image/jpg;base64," + a.FotoArticulo.ToBase64 + "' style='height:150px; width:150px'\\>",
+                           Foto = @"\<img class='productImage' src='data:image/jpg;base64," + a.FotoArticulo.ToBase64 + "' style='height:150px; width:150px'\\>",
                        })
                    }, JsonRequestBehavior.AllowGet);
             }
@@ -391,6 +391,7 @@ namespace SisComprasWebApp.Controllers
 
                 ordenDeCompra.cabecera.MonedasActivas = monedaBl.ConsultarMonedasActivasList(0)
                     .Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.Codigo.ToString(), Selected = m.FlagDefault == "Si" });
+                ViewBag.RecargarGrilla = true;
                 return View("Create", ordenDeCompra);
             }
             else

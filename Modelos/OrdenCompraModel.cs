@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Web.Mvc;
 using System.ComponentModel.DataAnnotations;
+using Modelos.Contracts;
 
 namespace Modelos
 {
@@ -19,7 +20,7 @@ namespace Modelos
     }
 
     //Cabecera de la orden de compra
-    public class OCCabeceraModel
+    public class OCCabeceraModel : IEntiy
     {
 
         public int ID { get; set; }
@@ -89,7 +90,7 @@ namespace Modelos
     }
 
     //Línea de la orden de compra
-    public class OCLineaModel
+    public class OCLineaModel : IEntiy
     {
         public int ID { get; set; }
         public int CabeceraId { get; set; }

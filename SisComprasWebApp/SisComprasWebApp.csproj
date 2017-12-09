@@ -216,6 +216,15 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Imagenes\cart.png" />
+    <Content Include="Content\Imagenes\check.png" />
+    <Content Include="Content\Imagenes\delete.png" />
+    <Content Include="Content\Imagenes\fondo_principal.png" />
+    <Content Include="Content\Imagenes\noImage.png" />
+    <Content Include="Content\Imagenes\send.png" />
+    <Content Include="Content\Imagenes\Users.ico" />
+    <Content Include="Content\jquery-ui.css" />
+    <Content Include="Content\jquery-ui.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -343,7 +352,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Content\Imagenes\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

@@ -71,6 +71,9 @@ var ordenDeCompra = (function () {
     return {
         init: function () {
             $(document).ready(function () {
+                if (recargarGrilla) {
+                    inicializarListaDeProductosActuales()
+                }
                 $("#btnCargarArticulos").click(function () {
                     if (tablaDeProductosActuales) {
                         tablaDeProductosActuales.destroy()
