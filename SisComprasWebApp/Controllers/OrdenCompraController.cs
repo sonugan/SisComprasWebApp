@@ -60,7 +60,11 @@ namespace SisComprasWebApp.Controllers
             try
             {
                 var model = new OrdenCompraModel();
-                var cabecera = new OCCabeceraModel();
+                var cabecera = new OCCabeceraModel()
+                {
+                    FechaEmision = DateTime.Now
+                };
+                cabecera.Numero = OCCabeceraModel.ObtenerNumero();
 
                 //DropDownList de proveedores
                 ProveedorBL l_bl_Proveedor = new ProveedorBL();
@@ -91,7 +95,7 @@ namespace SisComprasWebApp.Controllers
                 cabecera.MonedasActivas = l_sli_Monedas;
 
                 model.cabecera = cabecera;
-                ViewBag.RecargarGrilla = false;
+                ViewBag.RecargarGrilla = "false";
                 return View(model);
             }
             catch (Exception miEx)
@@ -116,7 +120,7 @@ namespace SisComprasWebApp.Controllers
 
                 ordenCompra.cabecera.MonedasActivas = monedaBl.ConsultarMonedasActivasList(0)
                     .Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.Codigo.ToString(), Selected = m.FlagDefault == "Si" });
-                ViewBag.RecargarGrilla = false;
+                ViewBag.RecargarGrilla = "false";
                 return View("Create", ordenCompra);
             }
             catch
@@ -280,6 +284,8 @@ namespace SisComprasWebApp.Controllers
                            Codigo = a.CodigoArticulo,
                            Nombre = a.NombreArticulo,
                            Descripcion = a.DescripcionArticulo,
+                           Cantidad = a.Cantidad,
+                           Precio = a.Precio,
                            Foto = @"\<img class='productImage' src='data:image/jpg;base64," + a.FotoArticulo.ToBase64 + "' style='height:150px; width:150px'\\>",
                        })
                    }, JsonRequestBehavior.AllowGet);
@@ -349,6 +355,7 @@ namespace SisComprasWebApp.Controllers
                         recordsFiltered = articulos.Paginado.RegistrosFiltrados,
                         data = articulos.Lista.Select(a => new
                         {
+                            ID = a.ID,
                             Codigo = a.Codigo,
                             Nombre = a.Nombre,
                             Descripcion = a.Descripcion,
@@ -383,6 +390,7 @@ namespace SisComprasWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                articulo.LoginUltModif = Session["UsuarioLogueado"].ToString();
                 ordenDeCompraBl.AgregarArticulo(articulo);
 
                 var ordenDeCompra = ordenDeCompraBl.ConsultarOrdenCompra(articulo.CabeceraId);
@@ -391,12 +399,26 @@ namespace SisComprasWebApp.Controllers
 
                 ordenDeCompra.cabecera.MonedasActivas = monedaBl.ConsultarMonedasActivasList(0)
                     .Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.Codigo.ToString(), Selected = m.FlagDefault == "Si" });
-                ViewBag.RecargarGrilla = true;
+                ViewBag.RecargarGrilla = "true";
                 return View("Create", ordenDeCompra);
             }
             else
             {
                 return View(articulo);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult Enviar(int ordenDeCompraId)
+        {
+            try
+            {
+                ordenDeCompraBl.Enviar(ordenDeCompraId);
+                return Content("ok");
+            }
+            catch(Exception ex)
+            {
+                return Content("fail");
             }
         }
 

@@ -55,6 +55,7 @@
     <Compile Include="Dtos\DataTableAjaxPostModel.cs" />
     <Compile Include="Dtos\ListaPaginada.cs" />
     <Compile Include="Dtos\OrdenCompraDto.cs" />
+    <Compile Include="Dtos\OrdenDeCompraSerializarDto.cs" />
     <Compile Include="Dtos\Paginado.cs" />
     <Compile Include="DynamicLengthAttribute.cs" />
     <Compile Include="Foto.cs" />

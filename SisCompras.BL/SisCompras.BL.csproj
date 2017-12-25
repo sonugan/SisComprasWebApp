@@ -65,6 +65,10 @@
       <Project>{c9d8a948-1e7a-4af9-8c71-55862ad3df02}</Project>
       <Name>AplicacionLog</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EnvioEmail\EnvioEmail.csproj">
+      <Project>{8ad2f738-5721-43c2-855d-9773d6c773b7}</Project>
+      <Name>EnvioEmail</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Modelos\Modelos.csproj">
       <Project>{b58dbee4-1390-4909-a18e-576e39a2fca5}</Project>
       <Name>Modelos</Name>

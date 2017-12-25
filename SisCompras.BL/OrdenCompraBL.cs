@@ -7,6 +7,9 @@ using Modelos;
 using AccesoDatos;
 using System.Data;
 using Modelos.Dtos;
+using EnvioEmail;
+using System.IO;
+using System.Configuration;
 
 namespace SisCompras.BL
 {
@@ -104,5 +107,42 @@ namespace SisCompras.BL
             return ordenCompraDao.ConsultarArticulosOrdenCompra(paginado, cabeceraId);
         }
 
+        public void Enviar(int ordenDeCompraId)
+        {
+            var ordenDeCompra = ConsultarOrdenCompra(ordenDeCompraId);
+            ordenDeCompra.lineas = ordenCompraDao.ConsultarLineasOrdenCompra(ordenDeCompraId);
+
+            Serializador<OrdenDeCompraSerializarDto> serializadorOrdenCompra = new Serializador<OrdenDeCompraSerializarDto>();
+
+            var ordenCompraSerializada = serializadorOrdenCompra.SerializeToString(new OrdenDeCompraSerializarDto(ordenDeCompra));
+
+            var direccionMailDesde = ConfigurationManager.AppSettings["DireccionMailDesde"];
+            var direccionMailHasta = ConfigurationManager.AppSettings["DireccionMailHasta"];
+
+            if(string.IsNullOrEmpty(direccionMailDesde) || string.IsNullOrEmpty(direccionMailHasta))
+            {
+                throw new Exception("No se encuentran configuradas correctamente las direcciones de envio de mail");
+            }
+
+            var email = new Email()
+            {
+                Asunto = "",
+                Cc = "",
+                Desde = direccionMailDesde,
+                Para = direccionMailHasta,
+                Mensaje = ordenCompraSerializada
+            };
+
+            var smtp = ConfigurationManager.AppSettings["smtp"];
+            var puerto = ConfigurationManager.AppSettings["port"];
+
+            if (string.IsNullOrEmpty(smtp) || string.IsNullOrEmpty(puerto))
+            {
+                throw new Exception("No se encuentra configurado correctamente el smtp o puerto para el envío de mails");
+            }
+
+            EmailSender.SendMail(smtp, puerto, email);
+
+        }
     }
 }

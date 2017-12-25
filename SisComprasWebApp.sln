@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SisCompras.BL", "SisCompras
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnvioEmail", "EnvioEmail\EnvioEmail.csproj", "{8AD2F738-5721-43C2-855D-9773D6C773B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BdEnMemoria", "BdEnMemoria.cs\BdEnMemoria.csproj", "{00B5076D-CDE9-4F66-ACA7-DC33186388D1}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,10 +45,6 @@ Global
 		{8AD2F738-5721-43C2-855D-9773D6C773B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8AD2F738-5721-43C2-855D-9773D6C773B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8AD2F738-5721-43C2-855D-9773D6C773B7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{00B5076D-CDE9-4F66-ACA7-DC33186388D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{00B5076D-CDE9-4F66-ACA7-DC33186388D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{00B5076D-CDE9-4F66-ACA7-DC33186388D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{00B5076D-CDE9-4F66-ACA7-DC33186388D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

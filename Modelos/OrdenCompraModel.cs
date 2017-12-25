@@ -22,7 +22,13 @@ namespace Modelos
     //Cabecera de la orden de compra
     public class OCCabeceraModel : IEntiy
     {
-
+        private static int GeneradorNumeros = 1;
+        public static string ObtenerNumero()
+        {
+            int numero = GeneradorNumeros;
+            GeneradorNumeros++;
+            return numero.ToString("00000000.##");
+        }
         public int ID { get; set; }
 
         [DisplayName("Número")]

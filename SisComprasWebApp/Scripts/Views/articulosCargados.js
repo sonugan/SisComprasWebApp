@@ -19,12 +19,14 @@ var articulosCargados = (function () {
             "columns": [
                 { "data": "Foto" },
                 { "data": "Codigo" },
-               { "data": "Nombre" },
-               { "data": "Descripcion" },
+                { "data": "Nombre" },
+                { "data": "Descripcion" },
+                { "data": "Cantidad" },
+                { "data": "Precio" },
                 {
                     "data": null,
-                    "defaultContent": "<a title='Agregar artículo'> <img src='/Content/Imagenes/check.png' style='width:80px;height:80px'></a>"
-                }
+                    "defaultContent": "<a title='Remover artículo'> <img src='/Content/Imagenes/delete.png' style='width:80px;height:80px'></a>"
+                },
             ],
             "language": {
                 "decimal": "",
@@ -54,12 +56,12 @@ var articulosCargados = (function () {
         $('#productosActuales tbody').on('click', 'a', function (e) {
             e.preventDefault()
             var data = tablaDeProductosActuales.row($(this).parents('tr')).data();
-            location.href = "AddArticulo?articuloId=2&ordenDeCompraId=12"
+            //location.href = "AddArticulo?articuloId=2&ordenDeCompraId=12"
         });
     }
 
     var inicializarEventos = function () {
-        $('#enviar').click(function(){
+        $('#enviar').click(function () {
             $("#dialogEnviar").dialog("open");
         })
         $('#eliminar').click(function () {
@@ -72,7 +74,7 @@ var articulosCargados = (function () {
         init: function () {
             $(document).ready(function () {
                 if (tablaDeProductosActuales) {
-					tablaDeProductosActuales.destroy()
+                    tablaDeProductosActuales.destroy()
                 }
                 inicializarListaDeProductosActuales()
                 $("#dialogEnviar").dialog({

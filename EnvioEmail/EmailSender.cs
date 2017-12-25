@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EnvioEmail
 {
-    internal class EmailSender
+    public class EmailSender
     {
         /// <summary>
         /// Sends an email

@@ -12,19 +12,21 @@ var ordenDeCompra = (function () {
             "processing": true,
             "serverSide": true,
             "bFilter": false,
+            "bInfo": false,
             "ajax": {
                 url: getUrlConsultaArticulos(),
                 type: 'GET'
             },
             "columns": [
-                { "data": "Foto" },
-                { "data": "Codigo" },
+               { "data": "ID", "visible": false },
+               { "data": "Foto" },
+               { "data": "Codigo" },
                { "data": "Nombre" },
                { "data": "Descripcion" },
-                {
-                    "data": null,
-                    "defaultContent": "<a title='Agregar artículo'> <img src='/Content/Imagenes/check.png' style='width:80px;height:80px'></a>"
-                }
+               {
+                   "data": null,
+                   "defaultContent": "<a title='Agregar artículo'> <img src='/Content/Imagenes/check.png' style='width:80px;height:80px'></a>"
+               }
             ],
             "language": {
                 "decimal": "",
@@ -53,19 +55,26 @@ var ordenDeCompra = (function () {
         });
         $('#productosActuales tbody').on('click', 'a', function (e) {
             e.preventDefault()
-            var data = tablaDeProductosActuales.row($(this).parents('tr')).data();
-            location.href = "AddArticulo?articuloId=2&ordenDeCompraId=12"
+            var data = tablaDeProductosActuales.row($(this).parents('tr')).data()
+            let cabeceraId = $("#CabeceraId").val()
+            location.href = "AddArticulo?articuloId=" + data.ID + "&ordenDeCompraId=" + cabeceraId
         });
     }
 
     var inicializarEventos = function () {
         $('#enviar').click(function(){
-            $("#dialogEnviar").dialog("open");
+            $("#dialogEnviar").dialog("open")
+
         })
         $('#eliminar').click(function () {
             $("#dialogEliminar").dialog("open");
 
         })
+    }
+
+    var mostrarError = function (mensaje) {
+        $("#dialogError #mensaje").text(mensaje)
+        $("#dialogError").dialog("open")
     }
 
     return {
@@ -83,7 +92,16 @@ var ordenDeCompra = (function () {
                 $("#dialogEnviar").dialog({
                     autoOpen: false, modal: true, buttons: {
                         "Enviar": function () {
-                            $(this).dialog("close");
+                            let cabeceraId = $("#CabeceraId").val()
+                            let me = this
+                            $.get("Enviar?ordenDeCompraId=" + cabeceraId, (data) => {
+                                if (data == "ok") {
+                                    $(me).dialog("close");
+                                } else {
+                                    $(me).dialog("close");
+                                    mostrarError("Se ha producido un error enviando la orden")
+                                }
+                            })
                         },
                         "Cancelar": function () {
                             $(this).dialog("close");
@@ -100,6 +118,13 @@ var ordenDeCompra = (function () {
                         }
                     }
                 });
+                $("#dialogError").dialog({
+                    autoOpen: false, modal: true, buttons: {
+                        "OK": function () {
+                            $(this).dialog("close");
+                        }
+                    }
+                })
                 inicializarEventos()
             })
         }

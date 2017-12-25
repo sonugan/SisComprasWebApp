@@ -169,6 +169,62 @@ namespace AccesoDatos
             finally { }
         }
 
+        public List<OCLineaModel> ConsultarLineasOrdenCompra(int cabeceraId)
+        {
+            AplicacionLog.Logueo logger = new AplicacionLog.Logueo();
+            string mensaje = "";
+            try
+            {
+                logger.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_DEBUG, "Ingresando", "OrdenCompraDAO.cs", "ConsultarOrdenesCompra");
+
+                string selectArticuloOrdenCompra = string.Format(@"
+                                SELECT o.orden_compra_linea_id, o.articulo_x_proveedor_id, 
+                                       o.cantidad_pedida, o.precio_unitario, o.fecha_recepcion, 
+                                       o.cantidad_recibida, o.porc_descuento, o.orden_compra_cab_id, 
+                                       o.unidad_medida_cod
+                                FROM ordenes_compra_lineas o
+                                WHERE o.orden_compra_cab_id = {0}", cabeceraId);
+                
+                DataTable articulosOrdenCompraDt = new DataTable();
+                using (OdbcConnection odbcConn = new OdbcConnection(connectionString))
+                {
+                    odbcConn.Open();
+                    OdbcDataAdapter adapter = new OdbcDataAdapter(selectArticuloOrdenCompra, odbcConn);
+                    adapter.Fill(articulosOrdenCompraDt);
+                }
+
+                List<OCLineaModel> lineas = new List<OCLineaModel>();
+
+                if (articulosOrdenCompraDt.Rows.Count > 0)
+                {
+                    var dr = articulosOrdenCompraDt.Rows[0];
+                    var articulo = new OCLineaModel()
+                    {
+                        CabeceraId = cabeceraId,
+                        ID = Convert.ToInt32(dr["orden_compra_linea_id"]),
+                        ArticuloXProveedorId = Convert.ToInt32(dr["articulo_x_proveedor_id"]),
+                        Cantidad = Convert.ToInt32(dr["cantidad_pedida"]),
+                        Precio = Convert.ToDecimal(dr["precio_unitario"]),
+                        FechaRecepcion = Convert.ToDateTime(dr["fecha_recepcion"]),
+                        Recibido = Convert.ToDecimal(dr["cantidad_recibida"]),
+                        PorcDescuento = Convert.ToDecimal(dr["porc_descuento"]),
+                        UnidadMedida = dr["unidad_medida_cod"].ToString()
+                    };
+                    lineas.Add(articulo);
+                }
+                return lineas;
+
+            }
+            catch (Exception miEx)
+            {
+                mensaje = miEx.Message.ToString();
+                System.Diagnostics.Debug.WriteLine(mensaje);
+                logger.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_ERROR, mensaje, "OrdenCompraDAO.cs", "ConsultarOrdenesCompra");
+                return null;
+            }
+            finally { }
+        }
+        
         public ListaPaginada<ArticuloOrdenCompraDto> ConsultarArticulosOrdenCompra(Paginado paginado, int cabeceraId)
         {
             AplicacionLog.Logueo logger = new AplicacionLog.Logueo();
@@ -333,14 +389,14 @@ namespace AccesoDatos
                 {
                     connection.Open();
                     OdbcTransaction trx = connection.BeginTransaction();
-                    string l_s_stSql = "{? = CALL SP_ORDENES_COMPRA_LINEAS_UPDATE(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+                    string l_s_stSql = "{? = CALL SP_ORDENES_COMPRA_LINEAS_INSERT(?, ?, ?, ?, ?, ?, ?, ?)}";
                     using (OdbcCommand command = new OdbcCommand(l_s_stSql, connection, trx))
                     {
                         command.Transaction = trx;
                         command.CommandType = CommandType.StoredProcedure;
 
                         AgregarParametroOutput(command, "PO_I_ORDEN_COMPRA_LINEA_ID", OdbcType.Int);
-                        AgregarParametroInput(command, "ORDEN_COMPRA_LINEA_ID", OdbcType.Int, articuloOrdenCompra.ID);
+                        //AgregarParametroInput(command, "ORDEN_COMPRA_LINEA_ID", OdbcType.Int, articuloOrdenCompra.ID);
                         AgregarParametroInput(command, "ARTICULO_X_PROVEEDOR_ID", OdbcType.Int, articuloOrdenCompra.ArticuloId);
                         AgregarParametroInput(command, "CANTIDAD_PEDIDA", OdbcType.Numeric, articuloOrdenCompra.Cantidad);
                         AgregarParametroInput(command, "PRECIO_UNITARIO", OdbcType.Numeric, articuloOrdenCompra.Precio);
@@ -348,8 +404,8 @@ namespace AccesoDatos
                         AgregarParametroInput(command, "CANTIDAD_RECIBIDA", OdbcType.Numeric, articuloOrdenCompra.Recibido);
                         AgregarParametroInput(command, "PORC_DESCUENTO", OdbcType.Numeric, articuloOrdenCompra.PorcDescuento);
                         AgregarParametroInput(command, "ORDEN_COMPRA_CAB_ID", OdbcType.Int, articuloOrdenCompra.CabeceraId);
-                        AgregarParametroInput(command, "UNIDAD_MEDIDA_COD", OdbcType.VarChar, 50, null);//TODO: ver de donde sacar este campo
-                        AgregarParametroInput(command, "LOGIN_ULT_MODIF", OdbcType.VarChar, 50, articuloOrdenCompra.LoginUltModif);
+                        AgregarParametroInput(command, "UNIDAD_MEDIDA_COD", OdbcType.VarChar, 50, "");//TODO: ver de donde sacar este campo
+                        //AgregarParametroInput(command, "LOGIN_ULT_MODIF", OdbcType.VarChar, 50, articuloOrdenCompra.LoginUltModif);
 
                         OdbcDataReader dr = command.ExecuteReader();
                         while (dr.Read())
