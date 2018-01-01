@@ -74,7 +74,7 @@ namespace SisCompras.BL
 
                 l_log_Objeto.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_DEBUG, "Ingresando", "OrdenCompraBL.cs", "ConsultarOrdenesCompra");
 
-                return l_dao_OCompra.Insertar(ordenCompra);
+                return l_dao_OCompra.InsertarCabecera(ordenCompra);
 
             }
             catch (Exception miEx)
@@ -129,9 +129,13 @@ namespace SisCompras.BL
                 Asunto = "",
                 Cc = "",
                 Desde = direccionMailDesde,
-                Para = direccionMailHasta,
-                Mensaje = ordenCompraSerializada
+                Para = direccionMailHasta
             };
+
+            using (Stream s = GenerateStreamFromString(ordenCompraSerializada))
+            {
+                email.AgregarAdjunto(s);
+            }
 
             var smtp = ConfigurationManager.AppSettings["smtp"];
             var puerto = ConfigurationManager.AppSettings["port"];
@@ -140,9 +144,29 @@ namespace SisCompras.BL
             {
                 throw new Exception("No se encuentra configurado correctamente el smtp o puerto para el envío de mails");
             }
-
+            
             EmailSender.SendMail(smtp, puerto, email);
 
+        }
+
+        public void Guardar(OrdenCompraModel ordenDeCompra)
+        {
+            ordenCompraDao.Guardar(ordenDeCompra);
+        }
+
+        public void Eliminar(int id)
+        {
+            ordenCompraDao.Eliminar(id);
+        }
+
+        private Stream GenerateStreamFromString(string s)
+        {
+            MemoryStream stream = new MemoryStream();
+            StreamWriter writer = new StreamWriter(stream);
+            writer.Write(s);
+            writer.Flush();
+            stream.Position = 0;
+            return stream;
         }
     }
 }

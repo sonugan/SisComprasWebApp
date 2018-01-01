@@ -61,7 +61,44 @@ namespace AccesoDatos
             finally { }
         }
 
-        public string Insertar(OrdenCompraModel ordenDeCompra)
+        public void Guardar(OrdenCompraModel ordenDeCompra)
+        {
+            try
+            {
+                InsertarLogEntrante("Guardar");
+
+                using (OdbcConnection connection = new OdbcConnection(connectionString))
+                {
+                    connection.Open();
+                    OdbcTransaction transaction = connection.BeginTransaction();
+
+                    if (ConsultarOrdenCompra(ordenDeCompra.cabecera.ID).cabecera == null)
+                    {
+                        InsertarCabecera(ordenDeCompra, connection, transaction);
+                    }
+                    else
+                    {
+                        ActualizarCabecera(ordenDeCompra, connection, transaction);
+                    }
+
+                    foreach(var articulo in ordenDeCompra.lineas)
+                    {
+                        AgregarArticulo(articulo, connection, transaction);
+                    }
+
+                    transaction.Commit();
+                }
+            }
+            catch (Exception miEx)
+            {
+                var resultado = miEx.Message.ToString();
+                System.Diagnostics.Debug.WriteLine(resultado);
+                loger.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_ERROR, resultado, "OrdenCompraDAO.cs", "Guardar");
+            }
+            finally { }
+        }
+
+        public string InsertarCabecera(OrdenCompraModel ordenDeCompra)
         {
             string resultado = "";
             try
@@ -71,7 +108,6 @@ namespace AccesoDatos
                 using (OdbcConnection connection = new OdbcConnection(connectionString))
                 {
                     connection.Open();
-                    //string l_s_stSql = "{? = CALL SP_ORDENES_COMPRA_CAB_INSERT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
                     OdbcTransaction trx = connection.BeginTransaction();
                     string l_s_stSql = "{? = CALL SP_ORDENES_COMPRA_CAB_INSERT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
                     using (OdbcCommand command = new OdbcCommand(l_s_stSql, connection, trx))
@@ -96,6 +132,9 @@ namespace AccesoDatos
                         OdbcDataReader dr = command.ExecuteReader();
                         while (dr.Read())
                             resultado = (dr.GetString(0));
+
+                        
+                    
                         trx.Commit();
                     }
 
@@ -427,6 +466,29 @@ namespace AccesoDatos
             finally { }
         }
 
+        public void Eliminar(int id)
+        {
+            var cabecera = ConsultarOrdenCompra(id);
+            var lineas = ConsultarLineasOrdenCompra(id);
+
+            if (cabecera != null && lineas != null)
+            {
+                using (OdbcConnection connection = new OdbcConnection(connectionString))
+                {
+                    connection.Open();
+                    OdbcTransaction transaction = connection.BeginTransaction();
+
+                    EliminarCabecera(id, connection, transaction);
+                    foreach(var articulo in lineas)
+                    {
+                        EliminarArticulo(articulo.ID, connection, transaction);
+                    }
+
+                    transaction.Commit();
+                }
+            }
+        }
+
         #region Private Methods
         private void InsertarLogEntrante(string metodo)
         {
@@ -465,13 +527,13 @@ namespace AccesoDatos
         //{
         //    private string Nombre { get; set; }
         //    private OdbcCommand Command { get; set; } 
-            
+
         //    public StoreProcedure(string nombre, OdbcCommand command)
         //    {
         //        Nombre = nombre;
         //        Command = command;
         //    }
-            
+
         //    public OdbcDataReader ExcecuteReader()
         //    {
 
@@ -512,5 +574,166 @@ namespace AccesoDatos
         //}
 
         #endregion Private Methods
+
+        private string InsertarCabecera(OrdenCompraModel ordenDeCompra, OdbcConnection connection, OdbcTransaction transaction)
+        {
+            string resultado = "";
+            try
+            {
+                InsertarLogEntrante("Insertar");
+                
+                string l_s_stSql = "{? = CALL SP_ORDENES_COMPRA_CAB_INSERT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+                using (OdbcCommand command = new OdbcCommand(l_s_stSql, connection, transaction))
+                {
+                    command.Transaction = transaction;
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    AgregarParametroOutput(command, "PO_I_ORDEN_COMPRA_ID", OdbcType.Int);
+                    AgregarParametroInput(command, "NUMERO", OdbcType.VarChar, 30, ordenDeCompra.cabecera.Numero);
+                    AgregarParametroInput(command, "PROVEEDOR_ID", OdbcType.Int, ordenDeCompra.cabecera.ProveedorId);
+                    AgregarParametroInput(command, "OBSERVACIONES", OdbcType.VarChar, 250, ordenDeCompra.cabecera.Observaciones);
+                    AgregarParametroInput(command, "NUMERO_REFERENCIA", OdbcType.VarChar, 30, ordenDeCompra.cabecera.NroReferencia);
+                    AgregarParametroInput(command, "FECHA_EMISION", OdbcType.Date, ordenDeCompra.cabecera.FechaEmision);
+                    AgregarParametroInput(command, "CONDICION_COMPRA_ID", OdbcType.Int, ordenDeCompra.cabecera.CondicionCompraId);
+                    AgregarParametroInput(command, "ESTADO_COD", OdbcType.VarChar, 50, OrdenCompraModel.Estados.INICIADA.ToString());
+                    AgregarParametroInput(command, "NUMERO_VERSION", OdbcType.Int, ordenDeCompra.cabecera.Version);
+                    AgregarParametroInput(command, "LOGIN_CREACION", OdbcType.VarChar, 50, ordenDeCompra.cabecera.LoginCreacion);
+                    AgregarParametroInput(command, "LOGIN_ULT_MODIF", OdbcType.VarChar, 50, ordenDeCompra.cabecera.LoginUltModif);
+                    AgregarParametroInput(command, "MONEDA_OPERACION_ID", OdbcType.Int, ordenDeCompra.cabecera.MonedaOperacionId);
+                    AgregarParametroInput(command, "COTIZACION", OdbcType.Numeric, ordenDeCompra.cabecera.Cotizacion);
+
+                    OdbcDataReader dr = command.ExecuteReader();
+                    while (dr.Read())
+                        resultado = (dr.GetString(0));
+                }
+
+                return resultado;
+            }
+            catch (Exception ex)
+            {
+                resultado = ex.Message.ToString();
+                System.Diagnostics.Debug.WriteLine(resultado);
+                loger.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_ERROR, resultado, "ArticuloDAO.cs", "Insertar");
+                return resultado;
+            }
+            finally { }
+        }
+
+        private string ActualizarCabecera(OrdenCompraModel ordenDeCompra, OdbcConnection connection, OdbcTransaction transaction)
+        {
+            string resultado = "";
+            try
+            {
+                InsertarLogEntrante("Insertar");
+                
+                string l_s_stSql = "{CALL SP_ORDENES_COMPRA_CAB_UPDATE(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+                using (OdbcCommand command = new OdbcCommand(l_s_stSql, connection, transaction))
+                {
+                    command.Transaction = transaction;
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    AgregarParametroOutput(command, "ORDEN_COMPRA_ID", OdbcType.Int);
+                    AgregarParametroInput(command, "NUMERO", OdbcType.VarChar, 30, ordenDeCompra.cabecera.Numero);
+                    AgregarParametroInput(command, "PROVEEDOR_ID", OdbcType.Int, ordenDeCompra.cabecera.ProveedorId);
+                    AgregarParametroInput(command, "OBSERVACIONES", OdbcType.VarChar, 250, ordenDeCompra.cabecera.Observaciones);
+                    AgregarParametroInput(command, "NUMERO_REFERENCIA", OdbcType.VarChar, 30, ordenDeCompra.cabecera.NroReferencia);
+                    AgregarParametroInput(command, "FECHA_EMISION", OdbcType.Date, ordenDeCompra.cabecera.FechaEmision);
+                    AgregarParametroInput(command, "CONDICION_COMPRA_ID", OdbcType.Int, ordenDeCompra.cabecera.CondicionCompraId);
+                    AgregarParametroInput(command, "ESTADO_COD", OdbcType.VarChar, 50, OrdenCompraModel.Estados.INICIADA.ToString());
+                    AgregarParametroInput(command, "NUMERO_VERSION", OdbcType.Int, ordenDeCompra.cabecera.Version);
+                    AgregarParametroInput(command, "LOGIN_ULT_MODIF", OdbcType.VarChar, 50, ordenDeCompra.cabecera.LoginUltModif);
+                    AgregarParametroInput(command, "MONEDA_OPERACION_ID", OdbcType.Int, ordenDeCompra.cabecera.MonedaOperacionId);
+                    AgregarParametroInput(command, "COTIZACION", OdbcType.Numeric, ordenDeCompra.cabecera.Cotizacion);
+
+                    OdbcDataReader dr = command.ExecuteReader();
+                    while (dr.Read())
+                        resultado = (dr.GetString(0));
+                }
+
+                return resultado;
+            }
+            catch (Exception ex)
+            {
+                resultado = ex.Message.ToString();
+                System.Diagnostics.Debug.WriteLine(resultado);
+                loger.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_ERROR, resultado, "ArticuloDAO.cs", "Insertar");
+                return resultado;
+            }
+            finally { }
+        }
+
+        private string AgregarArticulo(OCLineaModel articuloOrdenCompra, OdbcConnection connection, OdbcTransaction transaction)
+        {
+            string resultado = "";
+            try
+            {
+                InsertarLogEntrante("AgregarArticulo");
+                
+                string l_s_stSql = "{? = CALL SP_ORDENES_COMPRA_LINEAS_INSERT(?, ?, ?, ?, ?, ?, ?, ?)}";
+                using (OdbcCommand command = new OdbcCommand(l_s_stSql, connection, transaction))
+                {
+                    command.Transaction = transaction;
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    AgregarParametroOutput(command, "PO_I_ORDEN_COMPRA_LINEA_ID", OdbcType.Int);
+                    AgregarParametroInput(command, "ARTICULO_X_PROVEEDOR_ID", OdbcType.Int, articuloOrdenCompra.ID);
+                    AgregarParametroInput(command, "CANTIDAD_PEDIDA", OdbcType.Numeric, articuloOrdenCompra.Cantidad);
+                    AgregarParametroInput(command, "PRECIO_UNITARIO", OdbcType.Numeric, articuloOrdenCompra.Precio);
+                    AgregarParametroInput(command, "FECHA_RECEPCION", OdbcType.Date, articuloOrdenCompra.FechaRecepcion);
+                    AgregarParametroInput(command, "CANTIDAD_RECIBIDA", OdbcType.Numeric, articuloOrdenCompra.Recibido);
+                    AgregarParametroInput(command, "PORC_DESCUENTO", OdbcType.Numeric, articuloOrdenCompra.PorcDescuento);
+                    AgregarParametroInput(command, "ORDEN_COMPRA_CAB_ID", OdbcType.Int, articuloOrdenCompra.CabeceraId);
+                    AgregarParametroInput(command, "UNIDAD_MEDIDA_COD", OdbcType.VarChar, 50, "");
+
+                    OdbcDataReader dr = command.ExecuteReader();
+                    while (dr.Read())
+                        resultado = (dr.GetString(0));
+                }
+
+                return resultado ?? articuloOrdenCompra.ID.ToString();
+            }
+            catch (Exception miEx)
+            {
+                resultado = miEx.Message.ToString();
+                System.Diagnostics.Debug.WriteLine(resultado);
+                loger.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_ERROR, resultado, this.GetType().Name, "AgregarArticulo");
+                return resultado;
+            }
+            finally { }
+        }
+
+        private void EliminarCabecera(int id, OdbcConnection connection, OdbcTransaction transaction)
+        {
+            string sql = "{ CALL SP_ORDENES_COMPRA_CAB_DELETE (?)}";
+
+            using (OdbcCommand command = new OdbcCommand(sql, connection, transaction))
+            {
+                command.Transaction = transaction;
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                //Id
+                OdbcParameter param = command.Parameters.Add("ORDEN_COMPRA_CAB_ID", OdbcType.Int);
+                param.Value = id;
+
+                command.ExecuteNonQuery();
+            }
+        }
+
+        private void EliminarArticulo(int id, OdbcConnection connection, OdbcTransaction transaction)
+        {
+            string sql = "{ CALL SP_ORDENES_COMPRA_LINEAS_DELETE (?)}";
+
+            using (OdbcCommand command = new OdbcCommand(sql, connection, transaction))
+            {
+                command.Transaction = transaction;
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                //Id
+                OdbcParameter param = command.Parameters.Add("ORDEN_COMPRA_LINEA_ID", OdbcType.Int);
+                param.Value = id;
+
+                command.ExecuteNonQuery();
+            }
+        }
     }
 }

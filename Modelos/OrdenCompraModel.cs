@@ -12,6 +12,10 @@ namespace Modelos
 {
     public class OrdenCompraModel
     {
+        public OrdenCompraModel()
+        {
+            lineas = new List<OCLineaModel>();
+        }
 
         public OCCabeceraModel cabecera { get; set; }
         public List<OCLineaModel> lineas { get; set; }

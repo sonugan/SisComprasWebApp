@@ -65,7 +65,7 @@ namespace SisComprasWebApp.Controllers
                     FechaEmision = DateTime.Now
                 };
                 cabecera.Numero = OCCabeceraModel.ObtenerNumero();
-
+                Orden = null;
                 //DropDownList de proveedores
                 ProveedorBL l_bl_Proveedor = new ProveedorBL();
                 DataTable l_dt_Proveedores = l_bl_Proveedor.ConsultarProveedoresActivos(0);
@@ -110,11 +110,20 @@ namespace SisComprasWebApp.Controllers
             finally { }
         }
 
-        public ActionResult Edit(int ordenCompraId)
+        public ActionResult Edit(int? ordenCompraId)
         {
             try
             {
-                var ordenCompra = ordenDeCompraBl.ConsultarOrdenCompra(ordenCompraId);
+                var ordenCompra = Orden;
+                if (Orden == null && ordenCompraId.HasValue)
+                {
+                    ordenCompra = ordenDeCompraBl.ConsultarOrdenCompra(ordenCompraId.Value);
+                    Orden = ordenCompra;
+                }
+                else
+                {
+                    Orden.cabecera.ID = int.MaxValue;
+                }
                 ordenCompra.cabecera.ProveedoresActivos = proveedorBl.ConsultarProveedoresActivos()
                        .Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Nombre });
 
@@ -135,12 +144,21 @@ namespace SisComprasWebApp.Controllers
         {
             try
             {
+                if (ordenDeCompra.cabecera.ID != 0)
+                {
+                    ViewBag.RecargarGrilla = "true";
+                }
+                else
+                {
+                    ViewBag.RecargarGrilla = "false";
+                }
                 if (ModelState.IsValid)
                 {
                     ordenDeCompra.cabecera.LoginCreacion = Session["UsuarioLogueado"].ToString();
                     ordenDeCompra.cabecera.LoginUltModif = Session["UsuarioLogueado"].ToString();
-                    ordenDeCompraBl.InsertarCabecera(ordenDeCompra);
-                    return RedirectToAction("Index");
+                    //ordenDeCompraBl.InsertarCabecera(ordenDeCompra);
+                    Orden = ordenDeCompra;//Agrego en la sesion
+                    return RedirectToAction("Edit");
                 }
                 else
                 {
@@ -178,7 +196,9 @@ namespace SisComprasWebApp.Controllers
         // GET: OrdenCompra/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            ordenDeCompraBl.Eliminar(id);
+            var ordenesDeCompra = ordenDeCompraBl.ConsultarOrdenesCompra();
+            return View("Index", ordenesDeCompra);
         }
 
         // POST: OrdenCompra/Delete/5
@@ -270,8 +290,32 @@ namespace SisComprasWebApp.Controllers
             {
 
                 l_log_Objeto.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_DEBUG, "Ingresando", "OrdenCompraController.cs", "OCLineasCarga [HttpGet]");
-                
-                ListaPaginada<ArticuloOrdenCompraDto> articulos = ordenDeCompraBl.ConsultarArticulosOrdenCompra(new Paginado(), cabeceraId);
+
+                ArticuloBL l_bl_Articulo = new ArticuloBL();
+                var articulos = l_bl_Articulo.ConsultarArticulosCarga(new Paginado(), Orden.cabecera.ProveedorId.ToString(), "");
+
+                var cargados = Orden.lineas
+                    .Join(articulos.Lista, l => l.ArticuloXProveedorId, a => a.ID, (c, a) => new { Cargado = c, Articulo = a })
+                    .Select(a => new ArticuloOrdenCompraDto()
+                    {
+                        ID = a.Cargado.ID,
+                        Cantidad = a.Cargado.Cantidad,
+                        CabeceraId = cabeceraId,
+                        FechaRecepcion = a.Cargado.FechaRecepcion,
+                        PorcDescuento = a.Cargado.PorcDescuento,
+                        Precio = a.Cargado.Precio,
+                        Recibido = a.Cargado.Recibido,
+                        UnidadMedida = a.Cargado.UnidadMedida,
+                        ArticuloId = a.Articulo.ID,
+                        CodigoArticulo = a.Articulo.Codigo,
+                        DescripcionArticulo = a.Articulo.Descripcion,
+                        FotoArticulo = a.Articulo.Foto,
+                        NombreArticulo = a.Articulo.Nombre,
+                        ProveedorId = a.Articulo.ProveedorId
+                    });
+                    
+                ListaPaginada<ArticuloOrdenCompraDto> articulosCargados = Paginar<ArticuloOrdenCompraDto>(cargados, new Paginado());
+                    //ordenDeCompraBl.ConsultarArticulosOrdenCompra(new Paginado(), cabeceraId);
                 return Json(
                    new
                    {
@@ -279,7 +323,7 @@ namespace SisComprasWebApp.Controllers
                        pageSize = articulos.Paginado.TamanioHoja,
                        recordsTotal = articulos.Paginado.CantidadDeRegistros,
                        recordsFiltered = articulos.Paginado.RegistrosFiltrados,
-                       data = articulos.Lista.Select(a => new
+                       data = articulosCargados.Lista.Select(a => new
                        {
                            Codigo = a.CodigoArticulo,
                            Nombre = a.NombreArticulo,
@@ -301,7 +345,7 @@ namespace SisComprasWebApp.Controllers
             }
             finally { }
         }
-
+        
         [HttpGet]
         public ActionResult ConsultarArticulosCargados(int? start, int? length, string sProveedorId, string sFechaCargaDesde, string sFechaCargaHasta)
         {
@@ -391,9 +435,10 @@ namespace SisComprasWebApp.Controllers
             if (ModelState.IsValid)
             {
                 articulo.LoginUltModif = Session["UsuarioLogueado"].ToString();
-                ordenDeCompraBl.AgregarArticulo(articulo);
+                //ordenDeCompraBl.AgregarArticulo(articulo);
+                this.AgregarArticulo(articulo);
 
-                var ordenDeCompra = ordenDeCompraBl.ConsultarOrdenCompra(articulo.CabeceraId);
+                var ordenDeCompra = Orden;//ordenDeCompraBl.ConsultarOrdenCompra(articulo.CabeceraId);
                 ordenDeCompra.cabecera.ProveedoresActivos = proveedorBl.ConsultarProveedoresActivos()
                       .Select(p => new SelectListItem { Value = p.ID.ToString(), Text = p.Nombre });
 
@@ -406,6 +451,13 @@ namespace SisComprasWebApp.Controllers
             {
                 return View(articulo);
             }
+        }
+
+        [HttpGet]
+        public void EliminarArticulo(int articuloId)
+        {
+            var articulo = Orden.lineas.Where(l => l.ID == articuloId).FirstOrDefault();
+            Orden.lineas.Remove(articulo);
         }
 
         [HttpGet]
@@ -422,6 +474,75 @@ namespace SisComprasWebApp.Controllers
             }
         }
 
+        [HttpGet]
+        public ActionResult Guardar()
+        {
+            try
+            {
+                ordenDeCompraBl.Guardar(Orden);
+                return Content("OK");
+            }
+            catch (Exception)
+            {
+                return Content("Error");
+            }
+        }
+
+        public OrdenCompraModel Orden
+        {
+            get
+            {
+                return (OrdenCompraModel)Session["OrdenActual"];
+            }
+            set
+            {
+                Session["OrdenActual"] = value;
+            }
+        }
+
+        private void AgregarArticulo(ArticuloOrdenCompraDto articulo)
+        {
+            if (Orden.lineas == null)
+            {
+                Orden.lineas = new List<OCLineaModel>();
+            }
+            var yaCargado = Orden.lineas.Where(l => l.ID == articulo.ID).FirstOrDefault();
+            if (yaCargado != null)
+            {
+                yaCargado.Cantidad += articulo.Cantidad;
+            }
+            else
+            {
+                Orden.lineas.Add(new OCLineaModel()
+                {
+                    ID = articulo.ID,
+                    Cantidad = articulo.Cantidad,
+                    CabeceraId = articulo.CabeceraId,
+                    FechaRecepcion = articulo.FechaRecepcion,
+                    PorcDescuento = articulo.PorcDescuento,
+                    Precio = articulo.Precio,
+                    Recibido = articulo.Recibido,
+                    UnidadMedida = articulo.UnidadMedida,
+                    ArticuloXProveedorId = articulo.ArticuloId
+                });
+            }
+        }
+
+        public ListaPaginada<T> Paginar<T>(IEnumerable<T> lista, Paginado paginado) where T : class
+        {
+            int paginaInicial = paginado.PaginaInicial.HasValue ? paginado.PaginaInicial.Value : 0;
+            int tamanioHoja = paginado.TamanioHoja.HasValue ? paginado.TamanioHoja.Value : lista.Count();
+
+            var listaPaginada = new ListaPaginada<T>();
+            listaPaginada.Paginado = paginado;
+            listaPaginada.Lista = lista
+                .Skip(paginaInicial * tamanioHoja)
+                .Take(tamanioHoja)
+                .ToList();
+
+            return listaPaginada;
+        }
+    
         //public JsonResult CustomServerSideSearchAction(DataTableAjaxPostModel model)
         //{
         //    // action inside a standard controller

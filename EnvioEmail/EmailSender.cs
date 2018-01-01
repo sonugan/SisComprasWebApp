@@ -67,7 +67,7 @@ namespace EnvioEmail
             myMail.BodyEncoding = System.Text.Encoding.UTF8;
             // text or html
             myMail.IsBodyHtml = true;
-
+            
             mySmtpClient.Send(myMail);
         }
     }

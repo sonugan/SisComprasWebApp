@@ -6,7 +6,7 @@ var articulosCargados = (function () {
     }
 
     var tablaDeProductosActuales;
-
+    var articuloEliminar = null
     var inicializarListaDeProductosActuales = function () {
         tablaDeProductosActuales = $('#productosActuales').DataTable({
             "processing": true,
@@ -55,19 +55,10 @@ var articulosCargados = (function () {
         });
         $('#productosActuales tbody').on('click', 'a', function (e) {
             e.preventDefault()
-            var data = tablaDeProductosActuales.row($(this).parents('tr')).data();
-            //location.href = "AddArticulo?articuloId=2&ordenDeCompraId=12"
-        });
-    }
-
-    var inicializarEventos = function () {
-        $('#enviar').click(function () {
-            $("#dialogEnviar").dialog("open");
-        })
-        $('#eliminar').click(function () {
+            let data = tablaDeProductosActuales.row($(this).parents('tr')).data()
+            let cabeceraId = $("#CabeceraId").val()
             $("#dialogEliminar").dialog("open");
-
-        })
+        });
     }
 
     return {
@@ -90,14 +81,23 @@ var articulosCargados = (function () {
                 $("#dialogEliminar").dialog({
                     autoOpen: false, modal: true, buttons: {
                         "Eliminar": function () {
-                            $(this).dialog("close");
+                            var data = tablaDeProductosActuales.row($(this).parents('tr')).data();
+                            $.get("EliminarArticulo?articuloId=" + data.ID, function (data) {
+                                if (data == "ok") {
+                                    tablaDeProductosActuales.destroy()
+                                    inicializarListaDeProductosActuales()
+                                    $(me).dialog("close");
+                                } else {
+                                    $(me).dialog("close");
+                                    mostrarError("Se ha producido un error eliminando el articulo")
+                                }
+                            })
                         },
                         "Cancelar": function () {
                             $(this).dialog("close");
                         }
                     }
                 });
-                inicializarEventos()
             })
         }
     }

@@ -70,6 +70,18 @@ var ordenDeCompra = (function () {
             $("#dialogEliminar").dialog("open");
 
         })
+        $("#guardar").click(function () {
+            let me = this
+            $.get("Guardar", function (data) {
+                if (data == "OK") {
+                    location.href = "Index";
+                } else {
+                    mostrarError("Se ha producido un error guardando la orden")
+                }
+            })
+            //$("#ordenDeCompraForm").submit()
+            //return false
+        })
     }
 
     var mostrarError = function (mensaje) {
@@ -94,7 +106,7 @@ var ordenDeCompra = (function () {
                         "Enviar": function () {
                             let cabeceraId = $("#CabeceraId").val()
                             let me = this
-                            $.get("Enviar?ordenDeCompraId=" + cabeceraId, (data) => {
+                            $.get("Enviar?ordenDeCompraId=" + cabeceraId, function (data) {
                                 if (data == "ok") {
                                     $(me).dialog("close");
                                 } else {

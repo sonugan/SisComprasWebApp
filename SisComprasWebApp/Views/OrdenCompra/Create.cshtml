@@ -8,23 +8,26 @@
     <div class="col-md-4">
         <h2>Crear</h2>
     </div>
-    <div class="col-md-8" style="text-align:right">
-        @if (Model.cabecera.ID > 0)
-        {
-            <a href="~/OrdenCompra/ArticulosCargados?cabeceraId=@Model.cabecera.ID" title="Ítems agregados"><img src="~/Content/Imagenes/cart.png" style="width:80px;height:80px" /></a>
-            @*<a href="#" title="Descartar" id="eliminar"><img src="~/Content/Imagenes/delete.png" style="width:80px;height:80px" /></a>*@
-            <a href="#" title="Guardar" id="guardar"><img src="~/Content/Imagenes/check.png" style="width:80px;height:80px" /></a>
-            <a href="#" title="Enviar" id="enviar"><img src="~/Content/Imagenes/send.png" style="width:80px;height:80px" /></a>
-        }
-    </div>
 </div>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm(null, null, FormMethod.Get, new { id = "ordenDeCompraForm" }))
 {
     @Html.AntiForgeryToken()
 
     <h4>Orden de compra</h4>
     <hr />
+    <div class="form-group">
+        <div class="col-md-12" style="text-align:center">
+            @if (Model.cabecera.ID > 0)
+            {
+                <a href="~/OrdenCompra/ArticulosCargados?cabeceraId=@Model.cabecera.ID" title="Ítems agregados"><img src="~/Content/Imagenes/cart.png" style="width:80px;height:80px" /></a>
+                @*<a href="#" title="Descartar" id="eliminar"><img src="~/Content/Imagenes/delete.png" style="width:80px;height:80px" /></a>*@
+                <a href="#" title="Guardar" id="guardar"><img src="~/Content/Imagenes/check.png" style="width:80px;height:80px" /></a>
+                <a href="#" title="Enviar" id="enviar"><img src="~/Content/Imagenes/send.png" style="width:80px;height:80px" /></a>
+            }
+        </div>
+    </div>
+
     <div class="form-horizontal">
         @Html.HiddenFor(model => model.cabecera.ID, new { id = "CabeceraId" })
         @Html.HiddenFor(model => model.cabecera.Numero)
@@ -126,12 +129,12 @@
             <div class="col-md-12" style="text-align:center">
                 @if (Model.cabecera.ID == 0)
                 {
-                    <input type="submit" value="Crear" class="btn btn-success" />
+                    <input type="submit" value="Crear" class="btn btn-success" id="crear"/>
                 }
-                else
+                @*else
                 {
                     <input type="submit" value="Actualizar" class="btn btn-success" />
-                }
+                }*@
             </div>
             </div>
         </div>

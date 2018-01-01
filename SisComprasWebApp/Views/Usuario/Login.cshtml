@@ -4,7 +4,7 @@
 
 <div class="modal fade" id="LoginModal" role="dialog">
     <div class="modal-dialog">
-        <form class="form-horizontal">
+        <form class="form-horizontal" >
 
             <span> <img src="~/Content/Imagenes/Users.ico" class="IconoLogin" /> </span>
 
@@ -22,12 +22,12 @@
 
             <div class="form-group">
                 <label for="lblUsuario" class="col-lg-3 control-label">Usuario:</label>
-                <input class="form-control" id="inpUsuario" placeholder="Usuario" type="text" style = "text-transform:uppercase">
+                <input class="form-control" id="inpUsuario" placeholder="Usuario" type="text" style = "text-transform:uppercase" onKeyPress="return submitenter(this,event)">
             </div>
 
             <div class="form-group">
                 <label for="lblContrasena" class="col-lg-3 control-label">Contraseña:</label>
-                <input class="form-control" id="inpContrasena" placeholder="Contraseña" type="password">
+                <input class="form-control" id="inpContrasena" placeholder="Contraseña" type="password" onKeyPress="return submitenter(this,event)">
             </div>
 
             <div class="modal-footer">
@@ -78,7 +78,19 @@
 
     });
 
+    function submitenter(myfield, e) {
+        var keycode;
+        if (window.event) keycode = window.event.keyCode;
+        else if (e) keycode = e.which;
+        else return true;
 
+        if (keycode == 13) {
+            $("#Login").click()
+            return false;
+        }
+        else
+            return true;
+    }
 
     $("#Login").click(function ()
     {
