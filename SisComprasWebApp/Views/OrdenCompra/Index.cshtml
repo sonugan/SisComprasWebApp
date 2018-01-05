@@ -30,6 +30,7 @@
             <td>
                 <a href="@Url.Action("Edit", "OrdenCompra", new { @ordenCompraId=ordenDeCompra.Id })">Editar</a>
                 <a href="@Url.Action("Delete", "OrdenCompra", new { @id=ordenDeCompra.Id })">Eliminar</a>
+                <a href="@Url.Action("Enviar", "OrdenCompra", new { @ordenDeCompraId=ordenDeCompra.Id })">Enviar</a>
             </td>
         </tr>
     }

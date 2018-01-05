@@ -1,0 +1,121 @@
+;(function($){
+	$.fn.tabScrollify = function(options) {
+
+		var defaults = {
+			tabSelector: 'a',
+			prevText: '&laquo;',
+			nextText: '&raquo;'
+		};
+		
+		var options = $.extend(defaults, options);
+
+		return this.each(function() {
+			var el = $(this);
+			
+			// setup the tab panel
+			el.css({
+			    position: 'relative',
+			    overflow: 'hidden',
+			    width: 'auto'
+			});
+
+			// setup the next/prev buttons
+			var prev = ($('#tabScrollify-prev').length == 0) ? $('<a href="#" id="tabScrollify-prev" class="tabScrollify-button">' + options.prevText + '</a>').hide().insertBefore(el) : $('#tabScrollify-prev');
+			var next = ($('#tabScrollify-next').length == 0) ? $('<a href="#" id="tabScrollify-next" class="tabScrollify-button">' + options.nextText + '</a>').hide().insertBefore(el) : $('#tabScrollify-next');
+			prev.hide();
+			next.hide();
+
+			// setup the tabs if there are many tabs
+			var setupTabs = function(){
+				
+				// get total width of the tabs
+				var tabsWidth = 0;
+				el.find(options.tabSelector).each(function(i, elem){
+					var elem = $(elem);
+					tabsWidth += elem.outerWidth(true);
+				});
+				
+				var ul = el.find('ul');
+				tabsWidth = tabsWidth + ul.outerWidth(true) - ul.width() + 30;
+				if (tabsWidth <= el.width()) return;
+				
+				// set the widths
+				ul.width(tabsWidth);
+				el.height(ul.outerHeight(true));
+				next.show();
+				
+			};
+
+            // go to the index of the tab
+			var goToTab = function (activeIndex) {
+			    if (activeIndex != 0) {
+			        var tabWidth = 0;
+			        
+			        var tabWidthC = 0;
+			        el.find(options.tabSelector).each(function (i, elem) {
+			            var elem = $(elem);			            
+			            if (i == activeIndex) {
+			                tabWidth = tabWidthC;
+			            }
+			            else {
+			                tabWidthC += elem.outerWidth(true);
+			            }
+			        });
+
+			        el[0].scrollLeft = tabWidth;
+			        prev.show();
+			    }
+			};
+
+			
+			setupTabs();
+			$(document).bind('tabScrollify:refresh', setupTabs);
+			$(window).resize(setupTabs);
+			if(options.activeIndex) goToTab(options.activeIndex);
+			
+			// time for the scollification stuff
+			var interval;
+			next.click(function(){
+				next.blur();
+				return false;
+			}).hover(
+				function(){
+					clearTimeout(interval);
+					prev.show();
+					interval = setInterval(function(){
+						if (el[0].scrollLeft + el[0].clientWidth >= el[0].scrollWidth){
+							next.hide();
+							clearTimeout(interval);
+						}
+						else el[0].scrollLeft +=30;
+					}, 50);
+				},
+				function(){
+					clearTimeout(interval);
+					return false;
+				}
+			);
+			prev.click(function(){
+				prev.blur();
+				return false;
+			}).hover(
+				function(){
+					clearTimeout(interval);
+					next.show();
+					interval = setInterval(function(){
+						if (el[0].scrollLeft == 0){
+							prev.hide();
+							clearTimeout(interval);
+						}
+						else el[0].scrollLeft -=30;
+					}, 50);
+				},
+				function(){
+					clearTimeout(interval);
+					return false;
+				}
+			);
+			
+		});
+	};
+})(jQuery);

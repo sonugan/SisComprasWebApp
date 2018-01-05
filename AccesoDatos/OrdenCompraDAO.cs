@@ -72,19 +72,40 @@ namespace AccesoDatos
                     connection.Open();
                     OdbcTransaction transaction = connection.BeginTransaction();
 
-                    if (ConsultarOrdenCompra(ordenDeCompra.cabecera.ID).cabecera == null)
+                    if(ordenDeCompra.cabecera.ID == 0)
                     {
-                        InsertarCabecera(ordenDeCompra, connection, transaction);
+                        ordenDeCompra.cabecera.LoginCreacion = ordenDeCompra.cabecera.LoginUltModif;
+                        var id = InsertarCabecera(ordenDeCompra, connection, transaction);
+                        ordenDeCompra.lineas.ForEach(l => l.CabeceraId = Convert.ToInt32(id));
                     }
                     else
                     {
                         ActualizarCabecera(ordenDeCompra, connection, transaction);
                     }
 
-                    foreach(var articulo in ordenDeCompra.lineas)
+                    foreach (var articulo in ordenDeCompra.lineas)
                     {
                         AgregarArticulo(articulo, connection, transaction);
                     }
+
+                    //if (ConsultarOrdenCompra(ordenDeCompra.cabecera.ID).cabecera == null)
+                    //{
+                    //    InsertarCabecera(ordenDeCompra, connection, transaction);
+                    //}
+                    //else
+                    //{
+                    //    ActualizarCabecera(ordenDeCompra, connection, transaction);
+                    //}
+
+                    //foreach(var articulo in ordenDeCompra.lineas)
+                    //{
+                    //    AgregarArticulo(articulo, connection, transaction);
+                    //}
+
+                    //foreach(var linea in ConsultarLineasOrdenCompra(ordenDeCompra.cabecera.ID))
+                    //{
+                    //    if(ordenesDeCompra.linea)
+                    //}
 
                     transaction.Commit();
                 }
@@ -582,7 +603,7 @@ namespace AccesoDatos
             {
                 InsertarLogEntrante("Insertar");
                 
-                string l_s_stSql = "{? = CALL SP_ORDENES_COMPRA_CAB_INSERT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+                string l_s_stSql = "{? = CALL SP_ORDENES_COMPRA_CAB_INSERT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
                 using (OdbcCommand command = new OdbcCommand(l_s_stSql, connection, transaction))
                 {
                     command.Transaction = transaction;
@@ -596,6 +617,8 @@ namespace AccesoDatos
                     AgregarParametroInput(command, "FECHA_EMISION", OdbcType.Date, ordenDeCompra.cabecera.FechaEmision);
                     AgregarParametroInput(command, "CONDICION_COMPRA_ID", OdbcType.Int, ordenDeCompra.cabecera.CondicionCompraId);
                     AgregarParametroInput(command, "ESTADO_COD", OdbcType.VarChar, 50, OrdenCompraModel.Estados.INICIADA.ToString());
+                    AgregarParametroInput(command, "CANTIDAD_PEDIDA", OdbcType.Int, ordenDeCompra.cabecera.CantidadTotal);
+                    AgregarParametroInput(command, "IMPORTE_TOTAL", OdbcType.Int, ordenDeCompra.cabecera.ImporteTotal);
                     AgregarParametroInput(command, "NUMERO_VERSION", OdbcType.Int, ordenDeCompra.cabecera.Version);
                     AgregarParametroInput(command, "LOGIN_CREACION", OdbcType.VarChar, 50, ordenDeCompra.cabecera.LoginCreacion);
                     AgregarParametroInput(command, "LOGIN_ULT_MODIF", OdbcType.VarChar, 50, ordenDeCompra.cabecera.LoginUltModif);

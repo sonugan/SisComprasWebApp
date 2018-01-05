@@ -10,6 +10,13 @@
     </div>
 </div>
 
+<div id="popupMessage">
+    <div class="esplin1">
+        <span id="popupMessageIcon" class="margen-5"></span>
+        <span id="popupMessageDescription"></span>
+    </div>
+</div>
+
 @using (Html.BeginForm(null, null, FormMethod.Get, new { id = "ordenDeCompraForm" }))
 {
     @Html.AntiForgeryToken()
@@ -20,10 +27,10 @@
         <div class="col-md-12" style="text-align:center">
             @*@if (Model.cabecera.ID > 0)
             {*@
-                <a href="~/OrdenCompra/ArticulosCargados?cabeceraId=@Model.cabecera.ID" title="Ítems agregados"><img src="~/Content/Imagenes/cart.png" style="width:80px;height:80px" /></a>
+                @*<a href="~/OrdenCompra/ArticulosCargados?cabeceraId=@Model.cabecera.ID" title="Ítems agregados"><img src="~/Content/Imagenes/cart.png" style="width:80px;height:80px" /></a>*@
                 @*<a href="#" title="Descartar" id="eliminar"><img src="~/Content/Imagenes/delete.png" style="width:80px;height:80px" /></a>*@
                 <a href="#" title="Guardar" id="guardar"><img src="~/Content/Imagenes/check.png" style="width:80px;height:80px" /></a>
-                <a href="#" title="Enviar" id="enviar"><img src="~/Content/Imagenes/send.png" style="width:80px;height:80px" /></a>
+                @*<a href="#" title="Enviar" id="enviar"><img src="~/Content/Imagenes/send.png" style="width:80px;height:80px" /></a>*@
             @*}*@
         </div>
     </div>
@@ -54,7 +61,7 @@
             <div class="col-md-4 DB-select-proveedor">
                 @if (ViewBag.DeshabilitarProveedores == "false")
                 {
-                    @Html.DropDownListFor(model => model.cabecera.ProveedorId, Model.cabecera.ProveedoresActivos, "Seleccione un proveedor", new { @disabled = true })
+                    @Html.DropDownListFor(model => model.cabecera.ProveedorId, Model.cabecera.ProveedoresActivos, "Seleccione un proveedor", new { @disabled = true, @Id = "proveedores" })
                 }
                 else
                 {
@@ -66,7 +73,7 @@
                 @Html.LabelFor(model => model.cabecera.FechaEmision, htmlAttributes: new { @class = "control-label col-md-2" })
             </div>
             <div class="col-md-4">
-                @Html.TextBoxFor(x => x.cabecera.FechaEmision, "{0:yyyy-MM-dd}", new { @class = "form-control", @type = "date" })
+                @Html.TextBoxFor(x => x.cabecera.FechaEmision, "{0:yyyy-MM-dd}", new { @class = "form-control", @type = "date", @Id = "FechaEmision" })
                 @Html.ValidationMessageFor(model => model.cabecera.FechaEmision, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -76,14 +83,14 @@
                 @Html.LabelFor(model => model.cabecera.NroReferencia, htmlAttributes: new { @class = "control-label col-md-2" })
             </div>
             <div class="col-md-4">
-                @Html.EditorFor(model => model.cabecera.NroReferencia, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.cabecera.NroReferencia, new { htmlAttributes = new { @class = "form-control", @Id="NroReferencia" } })
                 @Html.ValidationMessageFor(model => model.cabecera.NroReferencia, "", new { @class = "text-danger" })
             </div>
             <div class="col-md-2">
                 @Html.LabelFor(model => model.cabecera.Observaciones, htmlAttributes: new { @class = "control-label col-md-2" })
             </div>
             <div class="col-md-4">
-                @Html.EditorFor(model => model.cabecera.Observaciones, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.cabecera.Observaciones, new { htmlAttributes = new { @class = "form-control", @Id = "Observaciones" } })
                 @Html.ValidationMessageFor(model => model.cabecera.Observaciones, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -92,25 +99,25 @@
                 @Html.LabelFor(model => model.cabecera.CantidadTotal, htmlAttributes: new { @class = "control-label col-md-2" })
             </div>
             <div class="col-md-1">
-                @Html.TextBoxFor(model => model.cabecera.CantidadTotal, new { @class = "form-control", @disabled=true })
+                @Html.TextBoxFor(model => model.cabecera.CantidadTotal, new { @class = "form-control", @disabled=true, @Id = "CantidadTotal" })
                 @Html.ValidationMessageFor(model => model.cabecera.CantidadTotal, "", new { @class = "text-danger" })
             </div>
             <div class="col-md-2">
                 @Html.LabelFor(model => model.cabecera.MonedaOperacionId, htmlAttributes: new { @class = "control-label col-md-2" })
             </div>
             <div class="col-md-2 DB-select-moneda">
-                @Html.DropDownListFor(model => model.cabecera.MonedaOperacionId, Model.cabecera.MonedasActivas, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.DropDownListFor(model => model.cabecera.MonedaOperacionId, Model.cabecera.MonedasActivas, new { @Id = "Moneda" })
                 @Html.ValidationMessageFor(model => model.cabecera.MonedaOperacionId, "", new { @class = "text-danger" })
             </div>
             <div class="col-md-2">
                 @Html.LabelFor(model => model.cabecera.Cotizacion, htmlAttributes: new { @class = "control-label col-md-2" })
             </div>
             <div class="col-md-2">
-                @Html.EditorFor(model => model.cabecera.Cotizacion, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.cabecera.Cotizacion, new { htmlAttributes = new { @class = "form-control", @Id = "Cotizacion" } })
                 @Html.ValidationMessageFor(model => model.cabecera.Cotizacion, "", new { @class = "text-danger" })
             </div>
             <div class="col-md-1">
-                @Html.TextBoxFor(model => model.cabecera.ImporteTotal, new { @class = "form-control", @disabled = true })
+                @Html.TextBoxFor(model => model.cabecera.ImporteTotal, new { @class = "form-control", @disabled = true, @Id = "ImporteTotal" })
                 @Html.ValidationMessageFor(model => model.cabecera.ImporteTotal, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -141,8 +148,13 @@
     <hr />
     //if (Model.cabecera.ID != 0)
     //{
-    <div id="contenedorGrilla">
-        @Html.Partial("OCLineasCarga", Model)
+    <div id="contenedorGrilla" class="row">
+        <div class="col-md-6">
+            @Html.Partial("OCLineasCarga", Model)
+        </div>
+        <div class="col-md-6">
+            @Html.Partial("ArticulosCargados", Model)
+        </div>
     </div>
     //}
     @*@Html.Partial("OCLineasOtros", Model)*@
@@ -160,4 +172,37 @@
 <script type="text/javascript">
     var recargarGrilla = (@ViewBag.RecargarGrilla != null && @ViewBag.RecargarGrilla)
 </script>
+
+
+<link rel="stylesheet" href="~/Content/reset.min.css" />
+<link rel="stylesheet" href="~/Content/font-awesome.min.css" />
+<link rel="stylesheet" href="~/Content/jquery-ui-1.10.4.custom.min.css" />
+<link rel="stylesheet" href="~/Content/customSelectBox.css" />
+<link rel="stylesheet" href="~/Content/jquery.qtip.min.css" />
+<link rel="stylesheet" href="~/Content/estilos.css" />
+
+<link rel="stylesheet" href="~/Content/ui.jqgrid.css" />
+<script src="~/Scripts/jquery-1.9.0.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.10.4.custom.min.js"></script>
+<script src="~/Scripts/core.js"></script>
+<!-- Fin scripts arriba -->
+
+
+<script src="~/Scripts/jquery.ui.datepicker-es.min.js"></script>
+<script src="~/Scripts/jquery.jqGrid.min.js"></script>
+<script src="~/Scripts/grid.locale-es.js"></script>
+@*<script src="~/Scripts/customInput.jquery.js"></script>*@
+<script src="~/Scripts/jquery.filestyle.js"></script>
+<script src="~/Scripts/jquery.jscrollpane.min.js"></script>
+<script src="~/Scripts/jquery.mousewheel.js"></script>
+<script src="~/Scripts/SelectBox.js"></script>
+<script src="~/Scripts/jquery.qtip.min.js"></script>
+<script src="~/Scripts/query-mix.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.js" type="text/javascript"></script>
+<script src="~/Scripts/jquery.validate.min.js" type="text/javascript"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js" type="text/javascript"></script>
+<script src="~/Scripts/jquery.blockUI.js" type="text/javascript"></script>
+<script src="~/Scripts/loading.js" type="text/javascript"></script>
+@*<script src="~/Scripts/autoNumeric/autoNumeric-1.9.18.js" type="text/javascript"></script>*@
 <script type="text/javascript" src="~/Scripts/Views/ordenDeCompra.js"></script>
+

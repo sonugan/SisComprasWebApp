@@ -1,25 +1,48 @@
 ﻿@model Modelos.OrdenCompraModel
 
-<h2>Lista de Artículos Seleccionados</h2>
+
+<div class="row">
+    <div class="col span_24 anchocol">
+        &nbsp
+    </div>
+</div>
+<div class="row">
+    <div class="col span_24 anchocol">
+        &nbsp
+    </div>
+</div>
+<div class="row">
+    <div class="col span_24 anchocol">
+        &nbsp
+    </div>
+</div>
+<div class="row">
+    <div class="col span_24 anchocol">
+        &nbsp
+    </div>
+</div>
+<div class="row">
+    <div class="col span_24 anchocol">
+        &nbsp
+    </div>
+</div>
+<div class="row">
+    <div class="col span_24 anchocol">
+        &nbsp
+    </div>
+</div>
+
+<h2>Artículos Cargados</h2>
 
 <hr />
-@Html.HiddenFor(model => model.cabecera.ID, new { id = "cabeceraId" })
-<table id="productosActuales" class="display" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Foto</th>
-            <th>Codigo</th>
-            <th>Nombre</th>
-            <th>Descripcion</th>
-            <th>Cantidad</th>
-            <th>Precio</th>
-            <th></th>
-        </tr>
-    </thead>
-</table>
-<div id="dialogEliminar" title="Alerta!" hidden="hidden">¿Desea eliminar el artículo?</div>
-<div class="col-md-offset-0 col-md-10">
-    @Html.ActionLink("Volver", "Edit", new { ordenCompraId = model.cabecera.ID })
+
+<div class="row">
+    <div class="col span_24 anchocol">
+        <table id="articuloCargadoGrid"></table>
+        <div id="articuloCargadoPager"></div>
+    </div>
 </div>
-<script src="~/Scripts/Views/articulosCargados.js"></script>
+
+<div id="articuloCargadoDialog">
+    <div id="articuloCargadoDialogTarget"></div>
+</div>

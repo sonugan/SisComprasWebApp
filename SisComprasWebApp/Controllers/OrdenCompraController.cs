@@ -9,6 +9,7 @@ using SisCompras.BL;
 using System.Configuration;
 using SisComprasWebApp.Models;
 using Modelos.Dtos;
+using Newtonsoft.Json;
 
 namespace SisComprasWebApp.Controllers
 {
@@ -349,7 +350,7 @@ namespace SisComprasWebApp.Controllers
         }
         
         [HttpGet]
-        public ActionResult ConsultarArticulosCargados(int? start, int? length, string sProveedorId, string sFechaCargaDesde, string sFechaCargaHasta)
+        public ActionResult ConsultarArticulosCargados(string sProveedorId, string sFechaCargaDesde, string sFechaCargaHasta)
         {
             AplicacionLog.Logueo l_log_Objeto = new AplicacionLog.Logueo();
             string l_s_Mensaje = "";
@@ -387,27 +388,20 @@ namespace SisComprasWebApp.Controllers
                 l_log_Objeto.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_DEBUG, "Ingresando", "OrdenCompraController.cs", "ConsultarArticulosCargados [HttpGet]");
 
                 ArticuloBL l_bl_Articulo = new ArticuloBL();
-                Paginado paginado = new Paginado() { PaginaInicial = start, TamanioHoja = length };
+                Paginado paginado = new Paginado();// { PaginaInicial = start, TamanioHoja = length };
                 var articulos = l_bl_Articulo.ConsultarArticulosCarga(paginado, sProveedorId, sFechaCargaDesde, sFechaCargaHasta);
 
                 //return Json(articulos, JsonRequestBehavior.AllowGet);
-
-                return Json(
-                    new
-                    {
-                        initialPage = articulos.Paginado.PaginaInicial,
-                        pageSize = articulos.Paginado.TamanioHoja,
-                        recordsTotal = articulos.Paginado.CantidadDeRegistros,
-                        recordsFiltered = articulos.Paginado.RegistrosFiltrados,
-                        data = articulos.Lista.Select(a => new
-                        {
-                            ID = a.ID,
-                            Codigo = a.Codigo,
-                            Nombre = a.Nombre,
-                            Descripcion = a.Descripcion,
-                            Foto = @"\<img src='data:image/jpg;base64," + a.Foto.ToBase64 + "' style='height:150px; width:150px'\\>",
-                        })
-                    }, JsonRequestBehavior.AllowGet);
+                
+                return Json( articulos.Lista.Select(a => new
+                {
+                    ID = a.ID,
+                    Codigo = a.Codigo,
+                    Nombre = a.Nombre,
+                    Descripcion = a.Descripcion,
+                    Precio = a.PrecioEnMoneda,
+                    Foto = a.Foto.ToBase64,//@"\<img src='data:image/jpg;base64," + a.Foto.ToBase64 + "' style='height:150px; width:150px'\\>"
+                }), JsonRequestBehavior.AllowGet);
 
             }
             catch (Exception miEx)
@@ -421,8 +415,7 @@ namespace SisComprasWebApp.Controllers
             }
             finally { }
         }
-
-
+        
         [HttpGet]
         public ActionResult AddArticulo(int articuloId, int ordenDeCompraId)
         {
@@ -479,12 +472,40 @@ namespace SisComprasWebApp.Controllers
             }
         }
 
-        [HttpGet]
-        public ActionResult Guardar()
+        [HttpPost]
+        public ActionResult Guardar(OrdenCompraDto ordenDto)
         {
             try
             {
-                ordenDeCompraBl.Guardar(Orden);
+                var lineas = JsonConvert.DeserializeObject<OrdenCompraDto.LineaDto[]>(ordenDto.Lineas);
+                var lineasEliminadas = JsonConvert.DeserializeObject<Int32[]>(ordenDto.Eliminados);
+
+                var orden = new OrdenCompraModel()
+                {
+                    cabecera = new OCCabeceraModel()
+                    {
+                        ID = ordenDto.CabeceraId,
+                        ProveedorId = ordenDto.ProveedorId,
+                        NroReferencia = ordenDto.Referencia,
+                        CantidadTotal = ordenDto.Cantidad,
+                        MonedaOperacionId = ordenDto.MonedaId,
+                        FechaEmision = ordenDto.FechaEmision,
+                        Observaciones = ordenDto.Observaciones,
+                        Cotizacion = ordenDto.Cotizacion,
+                        ImporteTotal= ordenDto.ImporteTotal,
+                        LoginUltModif = Session["UsuarioLogueado"].ToString()
+                    },
+                    lineas = lineas.Select(articulo => new OCLineaModel()
+                    {
+                        ID = articulo.ID,
+                        Cantidad = articulo.Cantidad,
+                        CabeceraId = ordenDto.CabeceraId,
+                        Precio = articulo.Precio,
+                        ArticuloXProveedorId = articulo.ArticuloId
+                    }).ToList()
+                };
+
+                ordenDeCompraBl.Guardar(orden);
                 return Content("OK");
             }
             catch (Exception)
@@ -547,7 +568,7 @@ namespace SisComprasWebApp.Controllers
 
             return listaPaginada;
         }
-    
+
         //public JsonResult CustomServerSideSearchAction(DataTableAjaxPostModel model)
         //{
         //    // action inside a standard controller
@@ -564,5 +585,47 @@ namespace SisComprasWebApp.Controllers
         //        data = res// result
         //    });
         //}
+
+        [HttpGet]
+        public PartialViewResult AddArticle(int id = 0, int cabeceraId = 0)
+        {
+            ArticuloOrdenCompraDto articulo;
+            if (id > 0)
+            {
+                articulo = ordenDeCompraBl.ConsultarArticulo(id, cabeceraId);
+            }
+            else
+            {
+                articulo = new ArticuloOrdenCompraDto();
+            }
+            articulo.LoginUltModif = Session["UsuarioLogueado"].ToString();
+
+            return PartialView("_AddArticle", articulo);
+        }
+
+        public class OrdenCompraDto
+        {
+            public int CabeceraId { get; set; }
+            public int ProveedorId { get; set; }
+            public string Referencia { get; set; }
+            public int Cantidad { get; set; }
+            public int MonedaId { get; set; }
+            public DateTime FechaEmision { get; set; }
+            public string Observaciones { get; set; }
+            public decimal Cotizacion { get; set; }
+            public decimal ImporteTotal { get; set; }
+
+            public string Lineas { get; set; }
+            public string Eliminados { get; set; }
+
+            public class LineaDto
+            {
+                public int ID { get; set; }
+                public string Codigo { get; set; }
+                public int ArticuloId { get; set; }
+                public int Cantidad { get; set; }
+                public decimal Precio { get; set; }
+            }
+        }
     }
 }

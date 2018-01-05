@@ -12,6 +12,10 @@ body {
     padding-right: 15px;
 }
 
+.invisible {
+    display: none;
+}
+
 /* Override the default bootstrap behavior where horizontal description lists 
    will truncate terms that are too long to fit in the left column 
 */

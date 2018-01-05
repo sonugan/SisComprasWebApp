@@ -237,6 +237,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\core.js" />
     <Content Include="Scripts\DataTables\DataTables-1.10.16\css\dataTables.bootstrap.css" />
     <Content Include="Scripts\DataTables\DataTables-1.10.16\css\dataTables.bootstrap.min.css" />
     <Content Include="Scripts\DataTables\DataTables-1.10.16\css\dataTables.bootstrap4.css" />
@@ -274,14 +275,33 @@
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <None Include="Scripts\jquery-1.8.0.intellisense.js" />
+    <Content Include="Scripts\jquery-1.8.0.js" />
+    <Content Include="Scripts\jquery-1.8.0.min.js" />
+    <Content Include="Scripts\jquery-1.9.0.min.js" />
+    <Content Include="Scripts\jquery-ui-1.10.4.custom.min.js" />
     <Content Include="Scripts\jquery-ui.js" />
+    <Content Include="Scripts\jquery.backstretch.min.js" />
+    <Content Include="Scripts\jquery.blockUI.js" />
+    <Content Include="Scripts\jquery.filestyle.js" />
+    <Content Include="Scripts\jquery.jqGrid.min.js" />
+    <Content Include="Scripts\jquery.jscrollpane.min.js" />
+    <Content Include="Scripts\jquery.mousewheel.js" />
+    <Content Include="Scripts\jquery.qtip.min.js" />
+    <Content Include="Scripts\jquery.tabscrollify.js" />
+    <Content Include="Scripts\jquery.ui.datepicker-es.min.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\loading.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\query-mix.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\SelectBox.js" />
     <Content Include="Scripts\Views\articulosCargados.js" />
     <Content Include="Scripts\Views\ordenDeCompra.js" />
     <Content Include="Scripts\_references.js" />
@@ -350,6 +370,7 @@
     <Content Include="Views\Usuario\Login.cshtml" />
     <Content Include="Views\OrdenCompra\AddArticulo.cshtml" />
     <Content Include="Views\OrdenCompra\ArticulosCargados.cshtml" />
+    <Content Include="Views\OrdenCompra\_AddArticle.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
