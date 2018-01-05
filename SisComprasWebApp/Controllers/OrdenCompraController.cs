@@ -95,6 +95,7 @@ namespace SisComprasWebApp.Controllers
                 cabecera.MonedasActivas = l_sli_Monedas;
 
                 model.cabecera = cabecera;
+                Orden = new OrdenCompraModel() { cabecera = new OCCabeceraModel(), lineas = new List<OCLineaModel>() };
                 ViewBag.RecargarGrilla = "false";
                 return View(model);
             }
@@ -115,7 +116,7 @@ namespace SisComprasWebApp.Controllers
             try
             {
                 var ordenCompra = Orden;
-                if (Orden == null && ordenCompraId.HasValue)
+                if (ordenCompraId.HasValue)
                 {
                     ordenCompra = ordenDeCompraBl.ConsultarOrdenCompra(ordenCompraId.Value);
                     Orden = ordenCompra;
@@ -325,6 +326,7 @@ namespace SisComprasWebApp.Controllers
                        recordsFiltered = articulos.Paginado.RegistrosFiltrados,
                        data = articulosCargados.Lista.Select(a => new
                        {
+                           ID = a.ID,
                            Codigo = a.CodigoArticulo,
                            Nombre = a.NombreArticulo,
                            Descripcion = a.DescripcionArticulo,
@@ -425,6 +427,7 @@ namespace SisComprasWebApp.Controllers
         public ActionResult AddArticulo(int articuloId, int ordenDeCompraId)
         {
             var articulo = ordenDeCompraBl.ConsultarArticulo(articuloId, ordenDeCompraId);
+            
             articulo.LoginUltModif = Session["UsuarioLogueado"].ToString();
             return View(articulo);
         }
@@ -445,6 +448,8 @@ namespace SisComprasWebApp.Controllers
                 ordenDeCompra.cabecera.MonedasActivas = monedaBl.ConsultarMonedasActivasList(0)
                     .Select(m => new SelectListItem { Value = m.ID.ToString(), Text = m.Codigo.ToString(), Selected = m.FlagDefault == "Si" });
                 ViewBag.RecargarGrilla = "true";
+                ViewBag.DeshabilitarProveedores = "false";
+                Orden.cabecera.ProveedorId = articulo.ProveedorId;
                 return View("Create", ordenDeCompra);
             }
             else

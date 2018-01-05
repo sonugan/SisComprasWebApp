@@ -2,7 +2,8 @@
 var ordenDeCompra = (function () {
 
     var getUrlConsultaArticulos = function () {
-        return 'ConsultarArticulosCargados?sProveedorId=' + $('#cabecera_ProveedorId').val() + "&sFechaCargaDesde=" + $('#FechaCargaDesde').val() + "&sFechaCargaHasta=" + $('#FechaCargaHasta').val()
+        let proveedorId = $('#cabecera_ProveedorId').val() ? $('#cabecera_ProveedorId').val() : $('#proveedores').val()
+        return 'ConsultarArticulosCargados?sProveedorId=' + proveedorId + "&sFechaCargaDesde=" + $('#FechaCargaDesde').val() + "&sFechaCargaHasta=" + $('#FechaCargaHasta').val()
     }
 
     var tablaDeProductosActuales;
@@ -94,7 +95,14 @@ var ordenDeCompra = (function () {
             $(document).ready(function () {
                 if (recargarGrilla) {
                     inicializarListaDeProductosActuales()
+                    $("#contenedorGrilla").show()
+                } else {
+                    $("#contenedorGrilla").hide()
                 }
+                $("#proveedores").change(function () {
+                    //$("#proveedores").attr("disabled", "disabled")
+                    $("#contenedorGrilla").show()
+                })
                 $("#btnCargarArticulos").click(function () {
                     if (tablaDeProductosActuales) {
                         tablaDeProductosActuales.destroy()

@@ -7,6 +7,7 @@
 <table id="productosActuales" class="display" cellspacing="0" width="100%">
     <thead>
         <tr>
+            <th>ID</th>
             <th>Foto</th>
             <th>Codigo</th>
             <th>Nombre</th>
@@ -19,6 +20,6 @@
 </table>
 <div id="dialogEliminar" title="Alerta!" hidden="hidden">¿Desea eliminar el artículo?</div>
 <div class="col-md-offset-0 col-md-10">
-    @Html.ActionLink("Volver", "Edit", new { ordenCompraId = 14})
+    @Html.ActionLink("Volver", "Edit", new { ordenCompraId = model.cabecera.ID })
 </div>
 <script src="~/Scripts/Views/articulosCargados.js"></script>

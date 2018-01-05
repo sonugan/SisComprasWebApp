@@ -18,13 +18,13 @@
     <hr />
     <div class="form-group">
         <div class="col-md-12" style="text-align:center">
-            @if (Model.cabecera.ID > 0)
-            {
+            @*@if (Model.cabecera.ID > 0)
+            {*@
                 <a href="~/OrdenCompra/ArticulosCargados?cabeceraId=@Model.cabecera.ID" title="Ítems agregados"><img src="~/Content/Imagenes/cart.png" style="width:80px;height:80px" /></a>
                 @*<a href="#" title="Descartar" id="eliminar"><img src="~/Content/Imagenes/delete.png" style="width:80px;height:80px" /></a>*@
                 <a href="#" title="Guardar" id="guardar"><img src="~/Content/Imagenes/check.png" style="width:80px;height:80px" /></a>
                 <a href="#" title="Enviar" id="enviar"><img src="~/Content/Imagenes/send.png" style="width:80px;height:80px" /></a>
-            }
+            @*}*@
         </div>
     </div>
 
@@ -52,13 +52,13 @@
                 @Html.LabelFor(model => model.cabecera.ProveedorId, htmlAttributes: new { @class = "control-label col-md-2" })
             </div>
             <div class="col-md-4 DB-select-proveedor">
-                @if (Model.cabecera.ID == 0)
+                @if (ViewBag.DeshabilitarProveedores == "false")
                 {
-                    @Html.DropDownListFor(model => model.cabecera.ProveedorId, Model.cabecera.ProveedoresActivos, "Seleccione un proveedor")
+                    @Html.DropDownListFor(model => model.cabecera.ProveedorId, Model.cabecera.ProveedoresActivos, "Seleccione un proveedor", new { @disabled = true })
                 }
                 else
                 {
-                    @Html.DropDownListFor(model => model.cabecera.ProveedorId, Model.cabecera.ProveedoresActivos, "Seleccione un proveedor", new { @disabled = true })
+                    @Html.DropDownListFor(model => model.cabecera.ProveedorId, Model.cabecera.ProveedoresActivos, "Seleccione un proveedor", new { @Id = "proveedores" })
                 }
                 @Html.ValidationMessageFor(model => model.cabecera.ProveedorId, "", new { @class = "text-danger" })
             </div>
@@ -127,11 +127,11 @@
         </div>*@
         <div class="form-group">
             <div class="col-md-12" style="text-align:center">
-                @if (Model.cabecera.ID == 0)
+                @*@if (Model.cabecera.ID == 0)
                 {
                     <input type="submit" value="Crear" class="btn btn-success" id="crear"/>
                 }
-                @*else
+                else
                 {
                     <input type="submit" value="Actualizar" class="btn btn-success" />
                 }*@
@@ -139,10 +139,12 @@
             </div>
         </div>
     <hr />
-    if (Model.cabecera.ID != 0)
-    {
+    //if (Model.cabecera.ID != 0)
+    //{
+    <div id="contenedorGrilla">
         @Html.Partial("OCLineasCarga", Model)
-    }
+    </div>
+    //}
     @*@Html.Partial("OCLineasOtros", Model)*@
 }
 
@@ -157,6 +159,5 @@
 
 <script type="text/javascript">
     var recargarGrilla = (@ViewBag.RecargarGrilla != null && @ViewBag.RecargarGrilla)
-    
 </script>
 <script type="text/javascript" src="~/Scripts/Views/ordenDeCompra.js"></script>

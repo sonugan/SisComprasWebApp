@@ -17,6 +17,7 @@ var articulosCargados = (function () {
                 type: 'GET'
             },
             "columns": [
+                { "data": "ID" },
                 { "data": "Foto" },
                 { "data": "Codigo" },
                 { "data": "Nombre" },
@@ -53,10 +54,12 @@ var articulosCargados = (function () {
                 }
             }
         });
+
         $('#productosActuales tbody').on('click', 'a', function (e) {
             e.preventDefault()
             let data = tablaDeProductosActuales.row($(this).parents('tr')).data()
             let cabeceraId = $("#CabeceraId").val()
+            articuloEliminar = data
             $("#dialogEliminar").dialog("open");
         });
     }
@@ -81,7 +84,7 @@ var articulosCargados = (function () {
                 $("#dialogEliminar").dialog({
                     autoOpen: false, modal: true, buttons: {
                         "Eliminar": function () {
-                            var data = tablaDeProductosActuales.row($(this).parents('tr')).data();
+                            var data = articuloEliminar
                             $.get("EliminarArticulo?articuloId=" + data.ID, function (data) {
                                 if (data == "ok") {
                                     tablaDeProductosActuales.destroy()
