@@ -295,7 +295,7 @@ namespace SisComprasWebApp.Controllers
 
                 ArticuloBL l_bl_Articulo = new ArticuloBL();
                 var articulos = l_bl_Articulo.ConsultarArticulosCarga(new Paginado(), Orden.cabecera.ProveedorId.ToString(), "");
-
+                
                 var cargados = Orden.lineas
                     .Join(articulos.Lista, l => l.ArticuloXProveedorId, a => a.ID, (c, a) => new { Cargado = c, Articulo = a })
                     .Select(a => new ArticuloOrdenCompraDto()
@@ -315,27 +315,22 @@ namespace SisComprasWebApp.Controllers
                         NombreArticulo = a.Articulo.Nombre,
                         ProveedorId = a.Articulo.ProveedorId
                     });
-                    
-                ListaPaginada<ArticuloOrdenCompraDto> articulosCargados = Paginar<ArticuloOrdenCompraDto>(cargados, new Paginado());
-                    //ordenDeCompraBl.ConsultarArticulosOrdenCompra(new Paginado(), cabeceraId);
-                return Json(
-                   new
-                   {
-                       initialPage = articulos.Paginado.PaginaInicial,
-                       pageSize = articulos.Paginado.TamanioHoja,
-                       recordsTotal = articulos.Paginado.CantidadDeRegistros,
-                       recordsFiltered = articulos.Paginado.RegistrosFiltrados,
-                       data = articulosCargados.Lista.Select(a => new
-                       {
-                           ID = a.ID,
-                           Codigo = a.CodigoArticulo,
-                           Nombre = a.NombreArticulo,
-                           Descripcion = a.DescripcionArticulo,
-                           Cantidad = a.Cantidad,
-                           Precio = a.Precio,
-                           Foto = @"\<img class='productImage' src='data:image/jpg;base64," + a.FotoArticulo.ToBase64 + "' style='height:150px; width:150px'\\>",
-                       })
-                   }, JsonRequestBehavior.AllowGet);
+
+                ListaPaginada<ArticuloOrdenCompraDto> articulosCargados = ordenDeCompraBl.ConsultarArticulosOrdenCompra(new Paginado(), cabeceraId);//Paginar<ArticuloOrdenCompraDto>(cargados, new Paginado());
+                var orden = ordenDeCompraBl.ConsultarOrdenCompra(cabeceraId);
+                
+                return Json(articulosCargados.Lista.Select(a => new
+                {
+                    ID = a.ID,
+                    ArticuloId = a.ArticuloId,
+                    Codigo = a.CodigoArticulo,
+                    Nombre = a.NombreArticulo,
+                    Descripcion = a.DescripcionArticulo,
+                    Precio = a.Precio,
+                    Cantidad = a.Cantidad,
+                    Subtotal = (orden.cabecera.Cotizacion > 0 ? (orden.cabecera.Cotizacion * a.Precio) : a.Precio) * a.Cantidad,
+                    Foto = a.FotoArticulo.ToBase64,
+                }), JsonRequestBehavior.AllowGet);
             }
             catch (Exception miEx)
             {
@@ -354,33 +349,6 @@ namespace SisComprasWebApp.Controllers
         {
             AplicacionLog.Logueo l_log_Objeto = new AplicacionLog.Logueo();
             string l_s_Mensaje = "";
-
-            //if (ModelState.IsValid)
-            //{
-            //    sMensaje = ublUsuario.ValidarUsuarioIngreso(pUsuario);
-            //}
-            //else
-            //{
-            //    var message = string.Join(" | ", ModelState.Values
-            //        .SelectMany(v => v.Errors)
-            //        .Select(e => e.ErrorMessage));
-            //    sMensaje = "Error: " + message.ToString();
-            //}
-
-            //Session["UsuarioLogueado"] = "";
-
-            //if (Request.IsAjaxRequest())
-            //{
-            //    if (sMensaje == "") //usuario logueado OK
-            //    {
-            //        Session["UsuarioLogueado"] = pUsuario.Usuario.ToUpper();
-            //    }
-            //    return Json(sMensaje, JsonRequestBehavior.AllowGet);
-            //}
-            //else
-            //{
-            //    return RedirectToAction("Index", "Home");
-            //}
 
             try
             {
@@ -482,6 +450,7 @@ namespace SisComprasWebApp.Controllers
 
                 var orden = new OrdenCompraModel()
                 {
+                    Eliminadas = lineasEliminadas.ToList(),
                     cabecera = new OCCabeceraModel()
                     {
                         ID = ordenDto.CabeceraId,

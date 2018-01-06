@@ -83,9 +83,25 @@ namespace AccesoDatos
                         ActualizarCabecera(ordenDeCompra, connection, transaction);
                     }
 
+                    var lineasActuales = ConsultarLineasOrdenCompra(ordenDeCompra.cabecera.ID);
+
+                    foreach(var articuloId in ordenDeCompra.Eliminadas)
+                    {
+                        EliminarArticulo(articuloId, connection, transaction);
+                    }
+
                     foreach (var articulo in ordenDeCompra.lineas)
                     {
-                        AgregarArticulo(articulo, connection, transaction);
+                        var lineaActual = lineasActuales.Where(l => l.ArticuloXProveedorId == articulo.ArticuloXProveedorId).FirstOrDefault();
+                        if (lineaActual == null)
+                        {
+                            AgregarArticulo(articulo, connection, transaction);
+                        }
+                        else
+                        {
+                            articulo.ID = lineaActual.ID;
+                            ActualizarArticulo(articulo, connection, transaction);
+                        }
                     }
 
                     //if (ConsultarOrdenCompra(ordenDeCompra.cabecera.ID).cabecera == null)
@@ -314,19 +330,22 @@ namespace AccesoDatos
 
                 if (articulosOrdenCompraDt.Rows.Count > 0)
                 {
-                    var dr = articulosOrdenCompraDt.Rows[0];
-                    var articulo = new ArticuloOrdenCompraDto()
+                    foreach (DataRow dr in articulosOrdenCompraDt.Rows)
                     {
-                        CabeceraId = cabeceraId,
-                        ID = Convert.ToInt32(dr["orden_compra_linea_id"]),
-                        Cantidad = Convert.ToInt32(dr["cantidad_pedida"]),
-                        ArticuloId = Convert.ToInt32(dr["articulo_x_proveedor_id"]),
-                        CodigoArticulo = dr["articulo_cod"].ToString(),
-                        ProveedorId = Convert.ToInt32(dr["proveedor_id"]),
-                        NombreArticulo = dr["articulo_nombre"].ToString(),
-                        FotoArticulo = FotoGenerator(dr["url_imagen"].ToString())
-                    };
-                    articulos.Add(articulo);
+                        var articulo = new ArticuloOrdenCompraDto()
+                        {
+                            CabeceraId = cabeceraId,
+                            ID = Convert.ToInt32(dr["orden_compra_linea_id"]),
+                            Cantidad = Convert.ToInt32(dr["cantidad_pedida"]),
+                            ArticuloId = Convert.ToInt32(dr["articulo_x_proveedor_id"]),
+                            CodigoArticulo = dr["articulo_cod"].ToString(),
+                            ProveedorId = Convert.ToInt32(dr["proveedor_id"]),
+                            NombreArticulo = dr["articulo_nombre"].ToString(),
+                            FotoArticulo = FotoGenerator(dr["url_imagen"].ToString()),
+                            Precio = Convert.ToDecimal(dr["precio_unitario"])
+                        };
+                        articulos.Add(articulo);
+                    }
                 }
 
                 Paginador<ArticuloOrdenCompraDto> paginador = new Paginador<ArticuloOrdenCompraDto>();
@@ -649,13 +668,13 @@ namespace AccesoDatos
             {
                 InsertarLogEntrante("Insertar");
                 
-                string l_s_stSql = "{CALL SP_ORDENES_COMPRA_CAB_UPDATE(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+                string l_s_stSql = "{CALL SP_ORDENES_COMPRA_CAB_UPDATE(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
                 using (OdbcCommand command = new OdbcCommand(l_s_stSql, connection, transaction))
                 {
                     command.Transaction = transaction;
                     command.CommandType = CommandType.StoredProcedure;
 
-                    AgregarParametroOutput(command, "ORDEN_COMPRA_ID", OdbcType.Int);
+                    AgregarParametroInput(command, "ORDEN_COMPRA_ID", OdbcType.Int, ordenDeCompra.cabecera.ID);
                     AgregarParametroInput(command, "NUMERO", OdbcType.VarChar, 30, ordenDeCompra.cabecera.Numero);
                     AgregarParametroInput(command, "PROVEEDOR_ID", OdbcType.Int, ordenDeCompra.cabecera.ProveedorId);
                     AgregarParametroInput(command, "OBSERVACIONES", OdbcType.VarChar, 250, ordenDeCompra.cabecera.Observaciones);
@@ -663,6 +682,8 @@ namespace AccesoDatos
                     AgregarParametroInput(command, "FECHA_EMISION", OdbcType.Date, ordenDeCompra.cabecera.FechaEmision);
                     AgregarParametroInput(command, "CONDICION_COMPRA_ID", OdbcType.Int, ordenDeCompra.cabecera.CondicionCompraId);
                     AgregarParametroInput(command, "ESTADO_COD", OdbcType.VarChar, 50, OrdenCompraModel.Estados.INICIADA.ToString());
+                    AgregarParametroInput(command, "CANTIDAD_PEDIDA", OdbcType.Int, ordenDeCompra.cabecera.CantidadTotal);
+                    AgregarParametroInput(command, "IMPORTE_TOTAL", OdbcType.Numeric, ordenDeCompra.cabecera.ImporteTotal);
                     AgregarParametroInput(command, "NUMERO_VERSION", OdbcType.Int, ordenDeCompra.cabecera.Version);
                     AgregarParametroInput(command, "LOGIN_ULT_MODIF", OdbcType.VarChar, 50, ordenDeCompra.cabecera.LoginUltModif);
                     AgregarParametroInput(command, "MONEDA_OPERACION_ID", OdbcType.Int, ordenDeCompra.cabecera.MonedaOperacionId);
@@ -720,6 +741,46 @@ namespace AccesoDatos
                 resultado = miEx.Message.ToString();
                 System.Diagnostics.Debug.WriteLine(resultado);
                 loger.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_ERROR, resultado, this.GetType().Name, "AgregarArticulo");
+                return resultado;
+            }
+            finally { }
+        }
+
+        private string ActualizarArticulo(OCLineaModel articuloOrdenCompra, OdbcConnection connection, OdbcTransaction transaction)
+        {
+            string resultado = "";
+            try
+            {
+                InsertarLogEntrante("ActualizarArticulo");
+                
+                string l_s_stSql = "{CALL SP_ORDENES_COMPRA_LINEAS_UPDATE(?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+                using (OdbcCommand command = new OdbcCommand(l_s_stSql, connection, transaction))
+                {
+                    command.Transaction = transaction;
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    AgregarParametroInput(command, "ORDEN_COMPRA_LINEA_ID", OdbcType.Int, articuloOrdenCompra.ID);
+                    AgregarParametroInput(command, "ARTICULO_X_PROVEEDOR_ID", OdbcType.Int, articuloOrdenCompra.ID);
+                    AgregarParametroInput(command, "CANTIDAD_PEDIDA", OdbcType.Numeric, articuloOrdenCompra.Cantidad);
+                    AgregarParametroInput(command, "PRECIO_UNITARIO", OdbcType.Numeric, articuloOrdenCompra.Precio);
+                    AgregarParametroInput(command, "FECHA_RECEPCION", OdbcType.Date, articuloOrdenCompra.FechaRecepcion);
+                    AgregarParametroInput(command, "CANTIDAD_RECIBIDA", OdbcType.Numeric, articuloOrdenCompra.Recibido);
+                    AgregarParametroInput(command, "PORC_DESCUENTO", OdbcType.Numeric, articuloOrdenCompra.PorcDescuento);
+                    AgregarParametroInput(command, "ORDEN_COMPRA_CAB_ID", OdbcType.Int, articuloOrdenCompra.CabeceraId);
+                    AgregarParametroInput(command, "UNIDAD_MEDIDA_COD", OdbcType.VarChar, 50, "");
+
+                    OdbcDataReader dr = command.ExecuteReader();
+                    while (dr.Read())
+                        resultado = (dr.GetString(0));
+                }
+
+                return resultado ?? articuloOrdenCompra.ID.ToString();
+            }
+            catch (Exception miEx)
+            {
+                resultado = miEx.Message.ToString();
+                System.Diagnostics.Debug.WriteLine(resultado);
+                loger.RegistraEnArchivoLog(AplicacionLog.Logueo.LOGL_ERROR, resultado, this.GetType().Name, "ActualizarArticulo");
                 return resultado;
             }
             finally { }

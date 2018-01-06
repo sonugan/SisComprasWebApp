@@ -50,10 +50,27 @@
                    
                 }
 
+                var recuperarArticulosCargados = function () {
+                    ordenCompra.main.articulos = []
+                    fotos = []
+                    $(GRID_ARTICULOS_CONTAINER).jqGrid('getDataIDs').forEach(function (rowId) {
+                        let data = $(GRID_ARTICULOS_CONTAINER).jqGrid('getRowData', rowId)
+
+                        let linea = {
+                            ID: rowId,
+                            Codigo: data.Codigo,
+                            ArticuloId: data.ArticuloId,
+                            Cantidad: data.Cantidad,
+                            Precio: data.Precio
+                        }
+                        ordenCompra.main.articulos.push(linea)
+                        fotos.push(data.Foto)
+                    })
+                }
 
                 initArticulosSeleccionadosGrid = function () {
                     let GRID_CONTAINER = ""
-                    var colNames = ['ID', 'Foto', 'FotoUrl', 'Codigo', 'Nombre', /*'Descripcion',*/ 'Cantidad', 'Precio Unitario', 'Subtotal'];
+                    var colNames = ['ID', 'Foto', 'ArticuloId', 'FotoUrl', 'Codigo', 'Nombre', /*'Descripcion',*/ 'Cantidad', 'Precio Unitario', 'Subtotal'];
                     var colModel = [
                         { name: 'ID', hidden: true, key: true },
                         {
@@ -61,6 +78,7 @@
                                 return "<img src='data:image/jpg;base64," + cellvalue + "' style='height:90px; width:90px'/>"
                             }
                         },
+                        { name: 'ArticuloId', hidden: true},
                         { name: 'FotoUrl', hidden: true},
                         { name: 'Codigo', width: 40, sorttype: 'text' },
                         { name: 'Nombre', width: 40, sorttype: 'text' },
@@ -70,7 +88,7 @@
                         { name: 'Subtotal', width: 40, sorttype: 'text' },
                     ]
                     var gridMode = core.gridModes.Add
-                    var grid = core.getBasicGrid(GRID_ARTICULOS_CONTAINER, getURLOrdenCompraGRID(), colNames, colModel, null, 400, 10, PAGER_ARTICULOS_CONTAINER, gridMode, false);
+                    var grid = core.getBasicGrid(GRID_ARTICULOS_CONTAINER, getURLLineasCargadasGRID(), colNames, colModel, null, 400, 10, PAGER_ARTICULOS_CONTAINER, gridMode, false, recuperarArticulosCargados);
                     core.setButtonAddFunction(GRID_ARTICULOS_CONTAINER, function () {
                         var selr = core.isSelectedRow(GRID_ARTICULOS_CONTAINER);
                         var id = core.getCellValue(GRID_ARTICULOS_CONTAINER, selr, "ID")
@@ -84,8 +102,14 @@
                     return '/OrdenCompra/ConsultarArticulosCargados' + getFilter();
                 }
 
+                getURLLineasCargadasGRID = function () {
+                    return '/OrdenCompra/ConsultarArticulosCargadosEnOrden?cabeceraId=' + $("#CabeceraId").val();
+                }
+
                 getFilter = function () {
-                    return '?sProveedorId=' + $(SELECT_PROVEEDOR).val();
+                    var FECHA_DESDE = "#FechaCargaDesde"
+                    var FECHA_HASTA = "#FechaCargaHasta"
+                    return '?sProveedorId=' + $(SELECT_PROVEEDOR).val() + "&sFechaCargaDesde=" + $(FECHA_DESDE).val() + "&sFechaCargaHasta=" + $(FECHA_HASTA).val();
                 }
                 
                 initValidadores = function () {
@@ -109,7 +133,9 @@
                     });
 
                     $(GUARDAR_BUTTON).click(function () {
-                        let CABECERA = "#CabeceraId" 
+                        let CABECERA = "#CabeceraId"
+                        ordenCompra.main.articulosEliminados = ordenCompra.main.articulosEliminados ? ordenCompra.main.articulosEliminados : []
+                        ordenCompra.main.articulos = ordenCompra.main.articulos ? ordenCompra.main.articulos : []
                         let orden = {
                             CabeceraId: $(CABECERA).val(),
                             ProveedorId: $(SELECT_PROVEEDOR).val(),
@@ -120,8 +146,8 @@
                             FechaEmision: $("#FechaEmision").val(),
                             Observaciones: $("#Observaciones").val(),
                             Cotizacion: $("#Cotizacion").val(),
-                            Lineas: JSON.stringify(articulos),
-                            Eliminados: JSON.stringify(articulosEliminados)
+                            Lineas: JSON.stringify(ordenCompra.main.articulos),
+                            Eliminados: JSON.stringify(ordenCompra.main.articulosEliminados)
                         }
                         
                         $.ajax({
@@ -174,7 +200,7 @@
                         var selr = core.isSelectedRow(GRID_CONTAINER);
                         if (selr) {
                             core.showPopUpMessageConfirmation('Confirme', '¿Desea eliminar el registro seleccionado?', function () {
-                                ordenCompra.main.articulosEliminados = selr
+                                ordenCompra.main.articulosEliminados.push(selr)
                                 ordenCompra.main.eliminar(selr);
                             });
                         }
@@ -283,6 +309,9 @@
                                                    agregarLinea(rowId, linea)
                                                })
                                            } else {
+                                               if (ordenCompra.main.articulos.length == 0) {
+                                                   $(GRID_ARTICULOS_CONTAINER).jqGrid('clearGridData')
+                                               }
                                                ordenCompra.main.articulos.push(linea)
 
                                                agregarLinea(rowId, linea)

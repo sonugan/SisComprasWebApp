@@ -31,15 +31,20 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administración<span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li>@Html.ActionLink("Compras", "Index", "OrdenCompra")</li>
-                            <li>@Html.ActionLink("Artículos", "Index", "Articulo")</li>
-                            <li>@Html.ActionLink("Proveedores", "Index", "Proveedor")</li>
-                            <li>@Html.ActionLink("Rubros", "Index", "Rubro")</li>
-                            <li role="separator" class="divider"></li>
                             <li>@Html.ActionLink("Países", "Index", "Pais")</li>
                             <li>@Html.ActionLink("Provincias", "Index", "Provincia")</li>
                             <li>@Html.ActionLink("Localidades", "Index", "Localidad")</li>
                         </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Compras<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Compras", "Index", "OrdenCompra")</li>
+                            <li>@Html.ActionLink("Artículos", "Index", "Articulo")</li>
+                            <li>@Html.ActionLink("Proveedores", "Index", "Proveedor")</li>
+                            <li>@Html.ActionLink("Rubros", "Index", "Rubro")</li>
+                            @*<li role="separator" class="divider"></li>*@
+                       </ul>
                     </li>    
                     @*<li>@Html.ActionLink("About", "About", "Home")</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>*@

@@ -21,6 +21,8 @@ namespace Modelos
         public List<OCLineaModel> lineas { get; set; }
 
         public enum Estados { INICIADA, COMPLETA }
+
+        public List<int> Eliminadas { get; set; }
     }
 
     //Cabecera de la orden de compra
@@ -96,6 +98,7 @@ namespace Modelos
 
         public IEnumerable<SelectListItem> ProveedoresActivos { get; set; }
         public IEnumerable<SelectListItem> MonedasActivas { get; set; }
+        
 
     }
 
