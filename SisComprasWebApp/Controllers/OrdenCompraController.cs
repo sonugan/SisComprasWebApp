@@ -318,6 +318,13 @@ namespace SisComprasWebApp.Controllers
 
                 ListaPaginada<ArticuloOrdenCompraDto> articulosCargados = ordenDeCompraBl.ConsultarArticulosOrdenCompra(new Paginado(), cabeceraId);//Paginar<ArticuloOrdenCompraDto>(cargados, new Paginado());
                 var orden = ordenDeCompraBl.ConsultarOrdenCompra(cabeceraId);
+
+                articulosCargados.Lista.ForEach(a =>
+                {
+                    var directory = string.Format("{0}Photos\\{1}\\{2}", AppDomain.CurrentDomain.BaseDirectory, a.ProveedorId, a.CodigoArticulo);
+                    System.IO.Directory.CreateDirectory(directory);
+                    System.IO.File.Copy(a.FotoArticulo.Path, string.Format("{0}\\{1}.{2}", directory, a.CodigoArticulo, a.FotoArticulo.Extension), true);
+                });
                 
                 return Json(articulosCargados.Lista.Select(a => new
                 {
@@ -329,7 +336,9 @@ namespace SisComprasWebApp.Controllers
                     Precio = a.Precio,
                     Cantidad = a.Cantidad,
                     Subtotal = (orden.cabecera.Cotizacion > 0 ? (orden.cabecera.Cotizacion * a.Precio) : a.Precio) * a.Cantidad,
-                    Foto = a.FotoArticulo.ToBase64,
+                    Foto = string.Format("\\Photos\\{0}\\{1}\\{2}.{3}", a.ProveedorId, a.CodigoArticulo, a.CodigoArticulo, a.FotoArticulo.Extension)
+
+                    //string.Format("\\Photos\\{0}\\{1}.{2}",a.ProveedorId, a.CodigoArticulo, a.FotoArticulo.Extension) //a.FotoArticulo.ToBase64,
                 }), JsonRequestBehavior.AllowGet);
             }
             catch (Exception miEx)
@@ -360,7 +369,14 @@ namespace SisComprasWebApp.Controllers
                 var articulos = l_bl_Articulo.ConsultarArticulosCarga(paginado, sProveedorId, sFechaCargaDesde, sFechaCargaHasta);
 
                 //return Json(articulos, JsonRequestBehavior.AllowGet);
-                
+
+                articulos.Lista.ForEach(a =>
+                {
+                    var directory = string.Format("{0}Photos\\{1}\\{2}", AppDomain.CurrentDomain.BaseDirectory, a.ProveedorId, a.Codigo);
+                    System.IO.Directory.CreateDirectory(directory);
+                    System.IO.File.Copy(a.Foto.Path, string.Format("{0}\\{1}.{2}", directory, a.Codigo, a.Foto.Extension), true);
+                });
+
                 return Json( articulos.Lista.Select(a => new
                 {
                     ID = a.ID,
@@ -368,7 +384,8 @@ namespace SisComprasWebApp.Controllers
                     Nombre = a.Nombre,
                     Descripcion = a.Descripcion,
                     Precio = a.PrecioEnMoneda,
-                    Foto = a.Foto.ToBase64,//@"\<img src='data:image/jpg;base64," + a.Foto.ToBase64 + "' style='height:150px; width:150px'\\>"
+                    Foto = string.Format("\\Photos\\{0}\\{1}\\{2}.{3}", a.ProveedorId, a.Codigo, a.Codigo, a.Foto.Extension)
+                    //a.Foto.ToBase64,//@"\<img src='data:image/jpg;base64," + a.Foto.ToBase64 + "' style='height:150px; width:150px'\\>"
                 }), JsonRequestBehavior.AllowGet);
 
             }

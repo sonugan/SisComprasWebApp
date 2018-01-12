@@ -189,15 +189,15 @@ var core = (
 
             //Muestra el texto en las grillas cuando no se obtuvieron resultados
             gridEmptyText :function (grid, display) {
-                var emptyText = "No se encontraron resultados"; 
-                var container = $(grid).parents('.ui-jqgrid-view');
-                if (container.length > 1) container = $(container[0]);
-                if (display) {
-                    if(container.find('#emptyDataText').length==0) container.find('.ui-jqgrid-hdiv').after('<div id="emptyDataText" >' + emptyText + '</div>'); 
-                }
-                else {
-                    container.find('#emptyDataText').remove(); 
-                }
+                //var emptyText = "No se encontraron resultados"; 
+                //var container = $(grid).parents('.ui-jqgrid-view');
+                //if (container.length > 1) container = $(container[0]);
+                //if (display) {
+                //    if(container.find('#emptyDataText').length==0) container.find('.ui-jqgrid-hdiv').after('<div id="emptyDataText" >' + emptyText + '</div>'); 
+                //}
+                //else {
+                //    container.find('#emptyDataText').remove(); 
+                //}
             },
 
             //Si tiene, oculta los controles de navegacion de paginas de la grilla en caso de que no se retornen registros:
