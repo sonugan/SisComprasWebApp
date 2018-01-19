@@ -19,16 +19,16 @@
                
                 var permisos = false;
                 
-
                 initOrdenCompraGrid = function () {
                     images = []
-                    var colNames = ['ID', 'Foto', 'Codigo', 'Nombre', /*'Descripcion',*/ /*'Cantidad',*/'Precio'];
+                    var colNames = ['ID', 'Foto', 'Codigo', 'Nombre', /*'Descripcion',*/ /*'Cantidad',*/'Precio Unitario'];
                     var colModel = [
                         { name: 'ID', hidden: true, key: true },
                         {
                             name: 'Foto', width: 30, formatter: function (cellvalue, options, rowObject) {
                                 images.push({ ID: rowObject.ID, Foto: cellvalue })
-                                return "<img src='data:image/jpg;base64," + cellvalue + "' style='height:90px; width:90px'/>"
+                                return "<img src='" + cellvalue + "' style='height:90px; width:90px'/>"
+                                //return "<img src='data:image/jpg;base64," + cellvalue + "' style='height:90px; width:90px'/>"
                             }
                         },
                         { name: 'Codigo', width: 30, sorttype: 'text' },
@@ -60,8 +60,8 @@
                             ID: rowId,
                             Codigo: data.Codigo,
                             ArticuloId: data.ArticuloId,
-                            Cantidad: data.Cantidad,
-                            Precio: data.Precio
+                            Cantidad: parseFloat(data.Cantidad),
+                            Precio: parseFloat(data.Precio)
                         }
                         ordenCompra.main.articulos.push(linea)
                         fotos.push(data.Foto)
@@ -75,19 +75,20 @@
                         { name: 'ID', hidden: true, key: true },
                         {
                             name: 'Foto', width: 50, formatter: function (cellvalue, options, rowObject) {
-                                return "<img src='data:image/jpg;base64," + cellvalue + "' style='height:90px; width:90px'/>"
+                                //return "<img src='data:image/jpg;base64," + cellvalue + "' style='height:90px; width:90px'/>"
+                                return "<img src='" + cellvalue + "' style='height:90px; width:90px'/>"
                             }
                         },
                         { name: 'ArticuloId', hidden: true},
                         { name: 'FotoUrl', hidden: true},
-                        { name: 'Codigo', width: 40, sorttype: 'text' },
+                        { name: 'Codigo', width: 35, sorttype: 'text' },
                         { name: 'Nombre', width: 40, sorttype: 'text' },
                         //{ name: 'Descripcion', width: 80, sorttype: 'text' },
                         { name: 'Cantidad', width: 30, sorttype: 'text' },
-                        { name: 'Precio', width: 40, sorttype: 'text' },
+                        { name: 'Precio', width: 45, sorttype: 'text' },
                         { name: 'Subtotal', width: 40, sorttype: 'text' },
                     ]
-                    var gridMode = core.gridModes.Add
+                    var gridMode = core.gridModes.View
                     var grid = core.getBasicGrid(GRID_ARTICULOS_CONTAINER, getURLLineasCargadasGRID(), colNames, colModel, null, 400, 10, PAGER_ARTICULOS_CONTAINER, gridMode, false, recuperarArticulosCargados);
                     core.setButtonAddFunction(GRID_ARTICULOS_CONTAINER, function () {
                         var selr = core.isSelectedRow(GRID_ARTICULOS_CONTAINER);
@@ -128,8 +129,12 @@
 
                     $(BUSCAR_BUTTON).click(function (e) {
                         e.preventDefault();
-                        images = []
-                        core.reloadGrid(GRID_CONTAINER, getURLOrdenCompraGRID());
+                        if (!$(SELECT_PROVEEDOR).val()) {
+                            core.showPopUpMessageInformation('Selección proveedor', 'Debe seleccionar un proveedor');
+                        } else {
+                            images = []
+                            core.reloadGrid(GRID_CONTAINER, getURLOrdenCompraGRID());
+                        }
                     });
 
                     $(GUARDAR_BUTTON).click(function () {
@@ -186,11 +191,18 @@
                         initOrdenCompraGrid();
                         initArticulosSeleccionadosGrid()
                         initButtonsEvents();
-                        //initValidadores();
+                        
+                        let id = $("#CabeceraId").val()
+                        if (id && id > 0) {
+                            $(SELECT_PROVEEDOR).attr("disabled", "disabled")
+                        }
                     },
                     showAdd: function (selr) {
-                        core.showDialog(DIALOG_CONTAINER, 'Agregar Articulo', DIALOG_CONTAINER_WIDTH, DIALOG_CONTAINER_MIN_HEIGTH);
-                        dialog.loadDialog(DIALOG_CONTAINER, selr);
+                        var selr = core.isSelectedRow(GRID_CONTAINER);
+                        if (selr) {
+                            core.showDialog(DIALOG_CONTAINER, 'Agregar Articulo', DIALOG_CONTAINER_WIDTH, DIALOG_CONTAINER_MIN_HEIGTH);
+                            dialog.loadDialog(DIALOG_CONTAINER, selr);
+                        }
                     },
                     showEdit: function (selr) {
                         core.showDialog(DIALOG_CONTAINER, 'Editar Articulo', DIALOG_CONTAINER_WIDTH, DIALOG_CONTAINER_MIN_HEIGTH);
@@ -213,6 +225,11 @@
                             }
                         })
                         ordenCompra.main.articulos.splice(pos, 1)
+
+                        $(GRID_ARTICULOS_CONTAINER).jqGrid('clearGridData')
+                        ordenCompra.main.articulos.forEach(function (a) {
+                            agregarLinea(a.ID, a)
+                        })
                         //core.reloadGrid(GRID_CONTAINER, getURLOrdenCompraGRID());
                         core.showPopUpMessageInformation('Artículo eliminado', 'Artículo eliminado con éxito');   
                     },
@@ -223,10 +240,26 @@
                     isInvalidForm: function (selr) {
                         dialog.initPage();
                     },
-                    articulos: articulos
+                    articulos: articulos,
+                    articulosEliminados: articulosEliminados
                 }
 
-            })();
+        })();
+
+        var agregarLinea = function (rowId, linea) {
+            let data = {
+                ID: rowId,//core.getCellValue(GRID_CONTAINER, rowId, "ID"), 
+                Foto: images.filter(function (o) { return o.ID == linea.ArticuloId; })[0].Foto,
+                Codigo: linea.Codigo,//core.getCellValue(GRID_ARTICULOS_CONTAINER, rowId, "Codigo"),
+                Nombre: core.getCellValue(GRID_CONTAINER, linea.ArticuloId, "Nombre"),
+                Cantidad: parseFloat(linea.Cantidad),
+                Precio: parseFloat(linea.Precio)//core.getCellValue(GRID_ARTICULOS_CONTAINER, rowId, "Precio")
+            }
+            let cotizacion = parseFloat($("#Cotizacion").val())
+            let precio = cotizacion > 0 ? data.Precio * cotizacion : data.Precio
+            data.Subtotal = precio * data.Cantidad
+            $(GRID_ARTICULOS_CONTAINER).jqGrid("addRowData", ordenCompra.main.articulos.length, data)
+        }
 
         var dialog = (
             function () {
@@ -262,21 +295,6 @@
                     $("#ImporteTotal").val(totales.Subtotal)
                 }
 
-                var agregarLinea = function (rowId, linea) {
-                    let data = {
-                        ID: core.getCellValue(GRID_CONTAINER, rowId, "ID"),
-                        Foto: images.filter(function (o) { return o.ID == rowId; })[0].Foto,
-                        Codigo: core.getCellValue(GRID_CONTAINER, rowId, "Codigo"),
-                        Nombre: core.getCellValue(GRID_CONTAINER, rowId, "Nombre"),
-                        Cantidad: linea.Cantidad,
-                        Precio: core.getCellValue(GRID_CONTAINER, rowId, "Precio")
-                    }
-                    let cotizacion = $("#Cotizacion").val()
-                    let precio = cotizacion > 0 ? data.Precio * cotizacion : data.Precio
-                    data.Subtotal = precio * data.Cantidad
-                    $(GRID_ARTICULOS_CONTAINER).jqGrid("addRowData", ordenCompra.main.articulos.length, data)
-                }
-
                 //Asigna los eventos a los controles
                 initControlEventsDialog = function () {
                     var initEvents = (
@@ -296,6 +314,11 @@
                                                Precio: parseFloat(core.getCellValue(GRID_CONTAINER, rowId, "Precio"))
                                            }
 
+                                           if (linea.Cantidad <= 0) {
+                                               core.showPopUpMessageInformation('Advertencia', 'Las cantidades a ingresar deben ser mayores a cero.');
+                                               return
+                                           }
+
                                            let lineaExistente = ordenCompra.main.articulos.filter(function (l) {
                                                return l.Codigo == linea.Codigo
                                            })
@@ -305,8 +328,8 @@
                                                linea = lineaExistente
                                                
                                                $(GRID_ARTICULOS_CONTAINER).jqGrid('clearGridData')
-                                               ordenCompra.main.articulos.forEach(function (l) {
-                                                   agregarLinea(rowId, linea)
+                                               ordenCompra.main.articulos.forEach(function (a) {
+                                                   agregarLinea(a.ID, a)
                                                })
                                            } else {
                                                if (ordenCompra.main.articulos.length == 0) {

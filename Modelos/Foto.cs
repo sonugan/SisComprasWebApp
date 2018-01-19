@@ -14,8 +14,18 @@ namespace Modelos
             Image img = Image.FromFile(path);
             ImageConverter converter = new ImageConverter();
             ToBase64 = Convert.ToBase64String((byte[])converter.ConvertTo(img, typeof(byte[])));
+            Path = path;
         }
         
+        public string Extension
+        {
+            get
+            {
+                var parts = Path.Split('.');
+                return parts[parts.Length - 1];
+            }
+        }
+        public string Path { get; private set; }
         public string ToBase64 { get; } 
     }
 }
